@@ -1,0 +1,120 @@
+/* content/toast.css
+ * In-page visual toast (bottom-right). Stays 4s, then fades out.
+ * Designed to look like a native Z.ai-styled notification card.
+ */
+#zai-enhancer-toast-host {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 2147483647; /* max */
+  pointer-events: none;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, "Noto Sans", "Noto Sans SC", sans-serif;
+  font-size: 14px;
+  color: #0d0d0d;
+}
+
+#zai-enhancer-toast-host * {
+  box-sizing: border-box;
+}
+
+.zai-toast {
+  pointer-events: auto;
+  min-width: 260px;
+  max-width: 360px;
+  margin-top: 8px;
+  padding: 12px 14px 12px 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-left: 4px solid #7c3aed; /* violet-600 */
+  border-radius: 10px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.18), 0 6px 10px -6px rgba(0, 0, 0, 0.12);
+  opacity: 0;
+  transform: translateX(20px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.zai-toast.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.zai-toast.leaving {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.zai-toast__icon {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #7c3aed;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.zai-toast__body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.zai-toast__title {
+  font-weight: 600;
+  font-size: 13.5px;
+  color: #111;
+  margin: 0 0 2px 0;
+}
+
+.zai-toast__msg {
+  margin: 0;
+  color: #555;
+  font-size: 12.5px;
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+.zai-toast__close {
+  flex: 0 0 auto;
+  border: 0;
+  background: transparent;
+  color: #999;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+.zai-toast__close:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: #333;
+}
+
+/* Dark mode (Z.ai supports it) */
+@media (prefers-color-scheme: dark) {
+  .zai-toast {
+    background: #1f1f23;
+    color: #f5f5f5;
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.55), 0 6px 10px -6px rgba(0, 0, 0, 0.4);
+  }
+  .zai-toast__title { color: #fff; }
+  .zai-toast__msg { color: #b3b3b3; }
+  .zai-toast__close { color: #888; }
+  .zai-toast__close:hover { background: rgba(255, 255, 255, 0.08); color: #ddd; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .zai-toast { transition: opacity 0.1s ease; transform: none; }
+  .zai-toast.visible { transform: none; }
+  .zai-toast.leaving { transform: none; }
+}

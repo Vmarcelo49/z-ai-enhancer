@@ -9,6 +9,55 @@
 
 const DEFAULT_ICON = browser.runtime.getURL("icons/icon-96.png");
 
+// ---------- i18n (inline, since background can't access content script's window.__zaiI18n) ----------
+const BG_I18N = {
+  "pt-BR": {
+    done_title: "Z.ai — resposta concluída",
+    stopped_title: "Z.ai — agente interrompido",
+    stopped_msg: "Você parou a geração manualmente.",
+    done_default: "O agente terminou de responder.",
+    sound_toggle: "Som ao concluir: {state}",
+    sound_on: "ON",
+    sound_off: "OFF"
+  },
+  "en-US": {
+    done_title: "Z.ai — response complete",
+    stopped_title: "Z.ai — agent interrupted",
+    stopped_msg: "You stopped generation manually.",
+    done_default: "The agent finished responding.",
+    sound_toggle: "Completion sound: {state}",
+    sound_on: "ON",
+    sound_off: "OFF"
+  },
+  "zh-CN": {
+    done_title: "Z.ai — 回复完成",
+    stopped_title: "Z.ai — 代理已中断",
+    stopped_msg: "您手动停止了生成。",
+    done_default: "代理已完成回复。",
+    sound_toggle: "完成声音：{state}",
+    sound_on: "开",
+    sound_off: "关"
+  },
+  "es": {
+    done_title: "Z.ai — respuesta completada",
+    stopped_title: "Z.ai — agente interrumpido",
+    stopped_msg: "Detuviste la generación manualmente.",
+    done_default: "El agente terminó de responder.",
+    sound_toggle: "Sonido de completado: {state}",
+    sound_on: "ON",
+    sound_off: "OFF"
+  }
+};
+
+function getI18nMessages() {
+  const uiLang = (browser.i18n?.getUILanguage?.() || "pt-BR").toLowerCase();
+  let locale = "pt-BR";
+  if (uiLang.startsWith("en")) locale = "en-US";
+  else if (uiLang.startsWith("zh")) locale = "zh-CN";
+  else if (uiLang.startsWith("es")) locale = "es";
+  return BG_I18N[locale] || BG_I18N["pt-BR"];
+}
+
 // ---------- install / update lifecycle ----------
 browser.runtime.onInstalled.addListener(async (details) => {
   if (details.reason === "install") {
@@ -55,7 +104,8 @@ async function notifyDone({ userStopped, durationMs, textLen }) {
     if (focused) return;
   }
 
-  const title = userStopped ? "Z.ai — agent interrupted" : "Z.ai — response complete";
+  const msgs = getI18nMessages();
+  const title = userStopped ? msgs.stopped_title : msgs.done_title;
   const parts = [];
   if (textLen) parts.push(`${textLen.toLocaleString()} chars`);
   if (durationMs) {
@@ -63,8 +113,8 @@ async function notifyDone({ userStopped, durationMs, textLen }) {
     parts.push(s < 60 ? `${s}s` : `${Math.floor(s / 60)}m ${s % 60}s`);
   }
   const message = userStopped
-    ? "You stopped generation manually."
-    : (parts.length ? parts.join(" · ") : "The agent finished responding.");
+    ? msgs.stopped_msg
+    : (parts.length ? parts.join(" · ") : msgs.done_default);
 
   try {
     await browser.notifications.create({
@@ -135,7 +185,7 @@ browser.commands.onCommand.addListener(async (command) => {
           type: "basic",
           iconUrl: DEFAULT_ICON,
           title: "Z.ai Enhancer",
-          message: `Completion sound: ${next ? "ON" : "OFF"}`
+          message: getI18nMessages().sound_toggle.replace("{state}", next ? getI18nMessages().sound_on : getI18nMessages().sound_off)
         });
       } catch (_) {}
     } catch (_) {}

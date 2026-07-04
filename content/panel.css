@@ -1,0 +1,1322 @@
+/* content/panel.css
+ * Z.ai Enhancer — sidebar (v0.7.0+).
+ *
+ * Visual style: matches chat.z.ai's own design system.
+ * - Font: Geist (with system fallbacks) — same as z.ai
+ * - Colors: monochrome neutrals (#0d0d0d, #fff, #f0f0f0, #5c5c5c) with purple ONLY as accent
+ * - Border-radius: 6px (buttons) / 8px (cards) — same as z.ai
+ * - Transitions: 0.15s cubic-bezier(.4,0,.2,1) — same as z.ai
+ *
+ * Components:
+ *   #zai-fab              Toggle button (bottom-right, always visible)
+ *   #zai-sidebar          The sidebar itself (right side, full height)
+ *   #zai-queue-badge      Item count badge on FAB
+ *   body.zai-sidebar-open Hook that shifts the chat layout
+ */
+
+/* ---------- Z.ai design tokens (mirror the page's own CSS vars) ---------- */
+#zai-fab,
+#zai-sidebar,
+#zai-sidebar * {
+  /* Color system — neutral monochrome + purple accent (z.ai style) */
+  --zai-bg: #ffffff;
+  --zai-bg-subtle: #f0f0f0;            /* z.ai --color-bg-surface */
+  --zai-bg-page: #f8f8f8;              /* z.ai --color-bg-page */
+  --zai-bg-hover: rgba(13, 13, 13, 0.05); /* z.ai --color-bg-hover */
+  --zai-bg-overlay: #e6e6e6;           /* z.ai --color-bg-overlay */
+
+  --zai-fg: #0d0d0d;                   /* z.ai --color-text-primary */
+  --zai-fg-secondary: #5c5c5c;         /* z.ai --color-text-secondary */
+  --zai-fg-tertiary: #888;             /* z.ai --color-text-tertiary */
+  --zai-fg-placeholder: #adadad;       /* z.ai --color-text-placeholder */
+  --zai-fg-inverted: #ffffff;          /* z.ai --color-text-inverted */
+
+  --zai-border: rgba(13, 13, 13, 0.10);  /* z.ai --color-border-default */
+  --zai-border-strong: rgba(13, 13, 13, 0.15); /* z.ai --color-border-strong */
+
+  /* Accent colors — z.ai uses purple ONLY as accent */
+  --zai-accent: #9e77ed;               /* z.ai --color-accent-purple-default */
+  --zai-accent-hover: #7c55d4;         /* z.ai --color-accent-purple-hover */
+  --zai-accent-pressed: #5e3ab8;       /* z.ai --color-accent-purple-pressed */
+  --zai-accent-subtle: #f5f3ff;        /* z.ai --color-accent-purple-subtle */
+  --zai-accent-text: #2c1478;          /* z.ai --color-accent-purple-text */
+  --zai-accent-border: #d9d1fb;        /* z.ai --color-accent-purple-border */
+
+  /* Status */
+  --zai-success: #1e8a3e;              /* z.ai --color-accent-green-default */
+  --zai-success-subtle: #edfaf2;       /* z.ai --color-accent-green-subtle */
+  --zai-danger: #e03131;               /* z.ai --color-accent-red-default */
+  --zai-danger-subtle: #fff0f0;        /* z.ai --color-accent-red-subtle */
+  --zai-warning: #e07b00;              /* z.ai --color-accent-orange-default */
+  --zai-warning-subtle: #fff4eb;       /* z.ai --color-accent-orange-subtle */
+  --zai-info: #0b7fff;                 /* z.ai --color-accent-blue-default */
+  --zai-info-subtle: #ebf4ff;          /* z.ai --color-accent-blue-subtle */
+
+  /* Typography */
+  --zai-font: Geist, "PingFang SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", "Microsoft YaHei", sans-serif;
+  --zai-font-mono: GeistMono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  /* Spacing & radii — z.ai uses 6px for buttons, 8px for cards */
+  --zai-radius-sm: 4px;
+  --zai-radius: 6px;     /* buttons — matches z.ai --new-chat radius */
+  --zai-radius-md: 8px;  /* cards, inputs */
+  --zai-radius-lg: 12px; /* modals, sidebar edges */
+  --zai-radius-full: 9999px;
+
+  /* Transitions — z.ai default */
+  --zai-transition: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Sizes */
+  --zai-sidebar-width: 360px;
+  --zai-header-h: 52px;
+
+  /* Shadows — subtle, z.ai prefers flat design */
+  --zai-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --zai-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --zai-shadow-lg: 0 10px 30px -5px rgba(0, 0, 0, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  #zai-fab,
+  #zai-sidebar,
+  #zai-sidebar * {
+    --zai-bg: #0d0d0d;                  /* z.ai dark mode primary */
+    --zai-bg-subtle: #1a1a1a;
+    --zai-bg-page: #0a0a0a;
+    --zai-bg-hover: rgba(255, 255, 255, 0.06);
+    --zai-bg-overlay: #2a2a2a;
+
+    --zai-fg: #ffffff;
+    --zai-fg-secondary: #adadad;
+    --zai-fg-tertiary: #888;
+    --zai-fg-placeholder: #666;
+    --zai-fg-inverted: #0d0d0d;
+
+    --zai-border: rgba(255, 255, 255, 0.10);
+    --zai-border-strong: rgba(255, 255, 255, 0.15);
+
+    --zai-accent: #9e77ed;
+    --zai-accent-hover: #b693f5;
+    --zai-accent-subtle: rgba(158, 119, 237, 0.12);
+    --zai-accent-text: #d9d1fb;
+    --zai-accent-border: rgba(158, 119, 237, 0.3);
+
+    --zai-success-subtle: rgba(30, 138, 62, 0.15);
+    --zai-danger-subtle: rgba(224, 49, 49, 0.15);
+    --zai-warning-subtle: rgba(224, 123, 0, 0.15);
+    --zai-info-subtle: rgba(11, 127, 255, 0.15);
+
+    --zai-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    --zai-shadow-lg: 0 10px 30px -5px rgba(0, 0, 0, 0.55), 0 4px 12px -2px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* ---------- Body hook: shift chat.z.ai layout when sidebar open ---------- */
+/* (handled by inline style injection in panel.js) */
+
+/* ---------- FAB (Floating Action Button — toggle) ---------- */
+#zai-fab {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 40px;       /* smaller, like z.ai icon buttons */
+  height: 40px;
+  border-radius: var(--zai-radius-full);
+  border: 1px solid var(--zai-border);
+  cursor: pointer;
+  z-index: 2147483646;
+  background: var(--zai-bg);
+  color: var(--zai-fg);
+  font-family: var(--zai-font);
+  font-weight: 600;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--zai-shadow);
+  transition: background var(--zai-transition), border-color var(--zai-transition), transform var(--zai-transition);
+  padding: 0;
+}
+
+#zai-fab:hover {
+  background: var(--zai-bg-hover);
+  border-color: var(--zai-border-strong);
+}
+
+#zai-fab:active {
+  transform: scale(0.96);
+}
+
+#zai-fab.zai-open {
+  background: var(--zai-bg-subtle);
+}
+
+#zai-fab.zai-queue-active {
+  border-color: var(--zai-accent);
+  color: var(--zai-accent);
+}
+
+#zai-fab.zai-queue-active::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: var(--zai-radius-full);
+  border: 1.5px solid var(--zai-accent);
+  animation: zai-pulse 1.8s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes zai-pulse {
+  0% { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+#zai-queue-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: var(--zai-radius-full);
+  background: var(--zai-accent);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 18px;
+  text-align: center;
+  box-shadow: var(--zai-shadow-sm);
+  pointer-events: none;
+  font-family: var(--zai-font);
+}
+
+#zai-queue-badge.hidden {
+  display: none;
+}
+
+/* ---------- Sidebar ---------- */
+#zai-sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: var(--zai-sidebar-width);
+  max-width: 90vw;
+  background: var(--zai-bg);
+  color: var(--zai-fg);
+  border-left: 1px solid var(--zai-border);
+  box-shadow: var(--zai-shadow-lg);
+  z-index: 2147483647;
+  font-family: var(--zai-font);
+  font-size: 15px;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: translateX(100%);
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#zai-sidebar.visible {
+  transform: translateX(0);
+}
+
+@media (max-width: 600px) {
+  #zai-sidebar {
+    width: 100vw;
+    max-width: 100vw;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #zai-sidebar { transition: opacity 0.1s ease; }
+  #zai-fab { transition: none; }
+  #zai-fab.zai-queue-active::before { animation: none; }
+}
+
+/* ---------- Sidebar header ---------- */
+#zai-sidebar .zai-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  height: var(--zai-header-h);
+  flex: 0 0 var(--zai-header-h);
+  border-bottom: 1px solid var(--zai-border);
+  background: var(--zai-bg);
+}
+
+#zai-sidebar .zai-header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--zai-fg);
+}
+
+#zai-sidebar .zai-header-logo {
+  width: 22px;
+  height: 22px;
+  border-radius: var(--zai-radius-sm);
+  background: var(--zai-fg);
+  color: var(--zai-fg-inverted);
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#zai-sidebar .zai-close {
+  background: transparent;
+  border: 0;
+  color: var(--zai-fg-secondary);
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: var(--zai-radius);
+  transition: background var(--zai-transition), color var(--zai-transition);
+}
+
+#zai-sidebar .zai-close:hover {
+  background: var(--zai-bg-hover);
+  color: var(--zai-fg);
+}
+
+/* ---------- Sidebar body (scrollable) ---------- */
+#zai-sidebar .zai-body {
+  overflow-y: auto;
+  flex: 1 1 auto;
+  padding: 4px 0;
+}
+
+#zai-sidebar .zai-body::-webkit-scrollbar {
+  width: 6px;
+}
+#zai-sidebar .zai-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+#zai-sidebar .zai-body::-webkit-scrollbar-thumb {
+  background: var(--zai-border);
+  border-radius: 3px;
+}
+#zai-sidebar .zai-body::-webkit-scrollbar-thumb:hover {
+  background: var(--zai-border-strong);
+}
+
+/* ---------- Section ---------- */
+#zai-sidebar .zai-section {
+  padding: 14px 12px;
+  border-bottom: 1px solid var(--zai-border);
+}
+#zai-sidebar .zai-section:last-child {
+  border-bottom: 0;
+}
+
+#zai-sidebar .zai-section-title {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--zai-fg-tertiary);
+  margin: 0 0 10px;
+}
+
+/* ---------- Row (toggle / input) ---------- */
+#zai-sidebar .zai-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 4px;
+  gap: 10px;
+  border-radius: var(--zai-radius);
+  transition: background var(--zai-transition);
+}
+
+#zai-sidebar .zai-row:hover {
+  background: var(--zai-bg-hover);
+}
+
+#zai-sidebar .zai-row-label {
+  flex: 1 1 auto;
+  font-size: 14px;
+  color: var(--zai-fg);
+  cursor: pointer;
+}
+
+#zai-sidebar .zai-row-hint {
+  color: var(--zai-fg-secondary);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+/* ---------- Toggle switch (z.ai-style: minimal, square-ish) ---------- */
+#zai-sidebar .zai-toggle {
+  position: relative;
+  width: 32px;
+  height: 18px;
+  flex: 0 0 auto;
+  cursor: pointer;
+  background: var(--zai-bg-overlay);
+  border-radius: var(--zai-radius-full);
+  transition: background var(--zai-transition);
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+#zai-sidebar .zai-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+#zai-sidebar .zai-toggle::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: var(--zai-radius-full);
+  background: #ffffff;
+  transition: transform var(--zai-transition);
+  box-shadow: var(--zai-shadow-sm);
+}
+
+#zai-sidebar .zai-toggle:has(input:checked) {
+  background: var(--zai-fg);
+}
+
+#zai-sidebar .zai-toggle:has(input:checked)::after {
+  transform: translateX(14px);
+  background: var(--zai-bg);
+}
+
+/* ---------- Range slider ---------- */
+#zai-sidebar input[type="range"] {
+  width: 130px;
+  accent-color: var(--zai-fg);
+  height: 4px;
+}
+
+/* ---------- Number/text input ---------- */
+#zai-sidebar input[type="number"],
+#zai-sidebar input[type="text"],
+#zai-sidebar textarea {
+  background: var(--zai-bg);
+  border: 1px solid var(--zai-border);
+  border-radius: var(--zai-radius-md);
+  padding: 6px 10px;
+  color: var(--zai-fg);
+  font-family: var(--zai-font);
+  font-size: 14px;
+  width: 100%;
+  transition: border-color var(--zai-transition), box-shadow var(--zai-transition);
+}
+
+#zai-sidebar input[type="number"] {
+  width: 70px;
+}
+
+#zai-sidebar input::placeholder,
+#zai-sidebar textarea::placeholder {
+  color: var(--zai-fg-placeholder);
+}
+
+#zai-sidebar input:focus,
+#zai-sidebar textarea:focus {
+  outline: none;
+  border-color: var(--zai-fg);
+  box-shadow: 0 0 0 1px var(--zai-fg);
+}
+
+#zai-sidebar textarea {
+  resize: vertical;
+  min-height: 36px;
+  line-height: 1.4;
+}
+
+/* ---------- Button ---------- */
+/* z.ai-style button: subtle background, no shadow, sharp radius */
+#zai-sidebar button.zai-btn {
+  background: var(--zai-fg);
+  color: var(--zai-fg-inverted);
+  border: 1px solid var(--zai-fg);
+  padding: 7px 14px;
+  border-radius: var(--zai-radius);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: var(--zai-font);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background var(--zai-transition), border-color var(--zai-transition), opacity var(--zai-transition);
+}
+
+#zai-sidebar button.zai-btn:hover {
+  background: rgba(13, 13, 13, 0.85);
+  border-color: rgba(13, 13, 13, 0.85);
+}
+
+@media (prefers-color-scheme: dark) {
+  #zai-sidebar button.zai-btn:hover {
+    background: rgba(255, 255, 255, 0.85);
+    border-color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+#zai-sidebar button.zai-btn:active {
+  transform: translateY(0.5px);
+}
+
+#zai-sidebar button.zai-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Ghost button (secondary) — z.ai style: transparent with border */
+#zai-sidebar button.zai-btn-ghost {
+  background: transparent;
+  color: var(--zai-fg);
+  border: 1px solid var(--zai-border);
+}
+
+#zai-sidebar button.zai-btn-ghost:hover {
+  background: var(--zai-bg-hover);
+  border-color: var(--zai-border-strong);
+}
+
+#zai-sidebar button.zai-btn-danger {
+  background: var(--zai-danger);
+  border-color: var(--zai-danger);
+  color: #ffffff;
+}
+
+#zai-sidebar button.zai-btn-danger:hover {
+  background: var(--zai-danger-hover, #bf2020);
+  border-color: var(--zai-danger-hover, #bf2020);
+}
+
+#zai-sidebar button.zai-btn-success {
+  background: var(--zai-success);
+  border-color: var(--zai-success);
+  color: #ffffff;
+}
+
+#zai-sidebar .zai-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+#zai-sidebar .zai-actions button {
+  flex: 1 1 auto;
+}
+
+/* ---------- Status pill ---------- */
+#zai-sidebar .zai-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--zai-radius-full);
+  font-size: 13px;
+  font-weight: 500;
+  background: var(--zai-bg-subtle);
+  color: var(--zai-fg-secondary);
+  border: 1px solid var(--zai-border);
+}
+
+#zai-sidebar .zai-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--zai-radius-full);
+  background: var(--zai-fg-tertiary);
+}
+
+#zai-sidebar .zai-status.idle .zai-status-dot { background: var(--zai-fg-tertiary); }
+#zai-sidebar .zai-status.active .zai-status-dot {
+  background: var(--zai-success);
+  animation: zai-blink 1.4s ease-in-out infinite;
+}
+#zai-sidebar .zai-status.waiting .zai-status-dot {
+  background: var(--zai-warning);
+  animation: zai-blink 1.4s ease-in-out infinite;
+}
+#zai-sidebar .zai-status.error .zai-status-dot { background: var(--zai-danger); }
+
+@keyframes zai-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ---------- Queue list ---------- */
+#zai-sidebar .zai-queue-list {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+#zai-sidebar .zai-queue-item {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+  padding: 8px;
+  border: 1px solid var(--zai-border);
+  border-radius: var(--zai-radius-md);
+  background: var(--zai-bg);
+  transition: background var(--zai-transition), border-color var(--zai-transition);
+}
+
+#zai-sidebar .zai-queue-item:hover {
+  background: var(--zai-bg-hover);
+}
+
+#zai-sidebar .zai-queue-item.sending {
+  border-color: var(--zai-accent);
+  background: var(--zai-accent-subtle);
+}
+
+#zai-sidebar .zai-queue-index {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--zai-radius-full);
+  background: var(--zai-bg-subtle);
+  color: var(--zai-fg-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+#zai-sidebar .zai-queue-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 14px;
+  line-height: 1.4;
+  resize: vertical;
+  min-height: 36px;
+  max-height: 120px;
+  padding: 4px 8px;
+}
+
+#zai-sidebar .zai-queue-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 0 0 auto;
+}
+
+#zai-sidebar .zai-queue-controls button {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--zai-radius-sm);
+  color: var(--zai-fg-tertiary);
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--zai-transition), color var(--zai-transition);
+}
+
+#zai-sidebar .zai-queue-controls button:hover {
+  background: var(--zai-bg-hover);
+  color: var(--zai-fg);
+}
+
+#zai-sidebar .zai-queue-empty {
+  padding: 18px;
+  text-align: center;
+  color: var(--zai-fg-tertiary);
+  font-size: 13px;
+  border: 1px dashed var(--zai-border);
+  border-radius: var(--zai-radius-md);
+}
+
+#zai-sidebar .zai-queue-add {
+  margin-top: 10px;
+}
+
+#zai-sidebar .zai-queue-add textarea {
+  min-height: 60px;
+  margin-bottom: 6px;
+}
+
+#zai-sidebar .zai-queue-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--zai-fg-tertiary);
+  margin-top: 8px;
+}
+
+/* ---------- Inline notice ---------- */
+#zai-sidebar .zai-notice {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: var(--zai-radius);
+  font-size: 13px;
+  background: var(--zai-bg-subtle);
+  color: var(--zai-fg-secondary);
+  border-left: 2px solid var(--zai-fg-tertiary);
+  line-height: 1.4;
+}
+
+#zai-sidebar .zai-notice.warning {
+  background: var(--zai-warning-subtle);
+  border-left-color: var(--zai-warning);
+  color: var(--zai-fg);
+}
+
+#zai-sidebar .zai-notice.error {
+  background: var(--zai-danger-subtle);
+  border-left-color: var(--zai-danger);
+  color: var(--zai-fg);
+}
+
+#zai-sidebar .zai-notice.success {
+  background: var(--zai-success-subtle);
+  border-left-color: var(--zai-success);
+  color: var(--zai-fg);
+}
+
+#zai-sidebar .zai-notice.info {
+  background: var(--zai-info-subtle);
+  border-left-color: var(--zai-info);
+  color: var(--zai-fg);
+}
+
+/* ---------- Prompts section ---------- */
+#zai-sidebar .zai-prompts-search {
+  margin-bottom: 8px;
+}
+
+#zai-sidebar .zai-prompts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+#zai-sidebar .zai-prompts-empty {
+  padding: 18px;
+  text-align: center;
+  color: var(--zai-fg-tertiary);
+  font-size: 13px;
+  border: 1px dashed var(--zai-border);
+  border-radius: var(--zai-radius-md);
+}
+
+#zai-sidebar .zai-prompt-card {
+  border: 1px solid var(--zai-border);
+  border-radius: var(--zai-radius-md);
+  padding: 10px;
+  cursor: pointer;
+  transition: background var(--zai-transition), border-color var(--zai-transition);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--zai-bg);
+}
+
+#zai-sidebar .zai-prompt-card:hover {
+  background: var(--zai-bg-hover);
+  border-color: var(--zai-border-strong);
+}
+
+#zai-sidebar .zai-prompt-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+#zai-sidebar .zai-prompt-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--zai-fg);
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#zai-sidebar .zai-prompt-actions {
+  display: flex;
+  gap: 2px;
+  flex: 0 0 auto;
+}
+
+#zai-sidebar .zai-prompt-btn {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--zai-radius-sm);
+  color: var(--zai-fg-tertiary);
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--zai-transition), color var(--zai-transition);
+}
+
+#zai-sidebar .zai-prompt-btn:hover {
+  background: var(--zai-bg-hover);
+  color: var(--zai-fg);
+}
+
+#zai-sidebar .zai-prompt-btn-danger:hover {
+  color: var(--zai-danger);
+}
+
+#zai-sidebar .zai-prompt-preview {
+  font-size: 13px;
+  color: var(--zai-fg-secondary);
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+#zai-sidebar .zai-prompt-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+#zai-sidebar .zai-chip {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: var(--zai-radius-full);
+  background: var(--zai-bg-subtle);
+  color: var(--zai-fg-secondary);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  border: 1px solid var(--zai-border);
+}
+
+#zai-sidebar .zai-chip-var {
+  background: var(--zai-accent-subtle);
+  color: var(--zai-accent-text);
+  border-color: var(--zai-accent-border);
+  font-family: var(--zai-font-mono);
+}
+
+#zai-sidebar .zai-prompt-used {
+  font-size: 11px;
+  color: var(--zai-fg-tertiary);
+}
+
+/* ---------- Drop zone ---------- */
+#zai-sidebar .zai-dropzone {
+  margin-top: 8px;
+  padding: 14px;
+  border: 1.5px dashed var(--zai-border);
+  border-radius: var(--zai-radius-md);
+  text-align: center;
+  color: var(--zai-fg-tertiary);
+  font-size: 13px;
+  transition: all var(--zai-transition);
+  cursor: default;
+}
+
+#zai-sidebar .zai-dropzone.drag {
+  border-color: var(--zai-fg);
+  background: var(--zai-bg-hover);
+  color: var(--zai-fg);
+}
+
+/* ---------- Modal (editor + var fill) ---------- */
+.zai-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(13, 13, 13, 0.4);
+  z-index: 2147483648;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family: Geist, "PingFang SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  animation: zai-fade-in 0.15s ease;
+}
+
+@keyframes zai-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.zai-modal-card {
+  background: #ffffff;
+  color: #0d0d0d;
+  border: 1px solid rgba(13, 13, 13, 0.10);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px -10px rgba(0, 0, 0, 0.20), 0 8px 24px -4px rgba(0, 0, 0, 0.10);
+  width: 100%;
+  max-width: 520px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: zai-slide-up 0.18s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  .zai-modal-card {
+    background: #0d0d0d;
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.10);
+    box-shadow: 0 20px 60px -10px rgba(0, 0, 0, 0.6), 0 8px 24px -4px rgba(0, 0, 0, 0.4);
+  }
+}
+
+@keyframes zai-slide-up {
+  from { transform: translateY(12px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zai-modal-overlay { animation: none; }
+  .zai-modal-card { animation: none; }
+}
+
+.zai-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(13, 13, 13, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  .zai-modal-header { border-bottom-color: rgba(255, 255, 255, 0.08); }
+}
+
+.zai-modal-header h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.zai-modal-header .zai-close {
+  background: transparent;
+  border: 0;
+  color: #5c5c5c;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.zai-modal-header .zai-close:hover {
+  background: rgba(13, 13, 13, 0.05);
+  color: #0d0d0d;
+}
+
+@media (prefers-color-scheme: dark) {
+  .zai-modal-header .zai-close { color: #9ca3af; }
+  .zai-modal-header .zai-close:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+  }
+}
+
+.zai-modal-body {
+  padding: 14px 16px;
+  overflow-y: auto;
+  flex: 1 1 auto;
+}
+
+.zai-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid rgba(13, 13, 13, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  .zai-modal-footer { border-top-color: rgba(255, 255, 255, 0.08); }
+}
+
+.zai-modal-footer button {
+  background: #0d0d0d;
+  color: #ffffff;
+  border: 1px solid #0d0d0d;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+@media (prefers-color-scheme: dark) {
+  .zai-modal-footer button {
+    background: #ffffff;
+    color: #0d0d0d;
+    border-color: #ffffff;
+  }
+}
+
+.zai-modal-footer button.zai-btn-ghost {
+  background: transparent;
+  color: inherit;
+  border: 1px solid rgba(13, 13, 13, 0.15);
+}
+
+@media (prefers-color-scheme: dark) {
+  .zai-modal-footer button.zai-btn-ghost { border-color: rgba(255, 255, 255, 0.15); }
+}
+
+.zai-modal-footer button:hover {
+  background: rgba(13, 13, 13, 0.85);
+}
+
+@media (prefers-color-scheme: dark) {
+  .zai-modal-footer button:hover { background: rgba(255, 255, 255, 0.85); }
+}
+
+.zai-modal-footer button.zai-btn-ghost:hover {
+  background: rgba(13, 13, 13, 0.05);
+}
+
+@media (prefers-color-scheme: dark) {
+  .zai-modal-footer button.zai-btn-ghost:hover { background: rgba(255, 255, 255, 0.08); }
+}
+
+.zai-modal-footer button.zai-btn-success {
+  background: #1e8a3e;
+  border-color: #1e8a3e;
+  color: #ffffff;
+}
+
+.zai-modal-footer button.zai-btn-success:hover {
+  background: #157530;
+}
+
+.zai-field-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: inherit;
+}
+
+.zai-field-hint {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+@media (prefers-color-scheme: dark) {
+  .zai-field-hint { color: #9ca3af; }
+}
+
+.zai-var-preview {
+  font-family: GeistMono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 13px;
+  background: #f0f0f0;
+  border-left: 2px solid #0d0d0d;
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  white-space: pre-wrap;
+  max-height: 120px;
+  overflow-y: auto;
+  color: #0d0d0d;
+}
+
+@media (prefers-color-scheme: dark) {
+  .zai-var-preview {
+    background: #1a1a1a;
+    color: #ffffff;
+    border-left-color: #ffffff;
+  }
+}
+
+/* ---------- html.dark class support (z.ai's dark mode strategy) ---------- */
+  html.dark #zai-fab, html.dark #zai-sidebar, html.dark #zai-sidebar * {
+    --zai-bg: #0d0d0d;                  /* z.ai dark mode primary */
+    --zai-bg-subtle: #1a1a1a;
+    --zai-bg-page: #0a0a0a;
+    --zai-bg-hover: rgba(255, 255, 255, 0.06);
+    --zai-bg-overlay: #2a2a2a;
+
+    --zai-fg: #ffffff;
+    --zai-fg-secondary: #adadad;
+    --zai-fg-tertiary: #888;
+    --zai-fg-placeholder: #666;
+    --zai-fg-inverted: #0d0d0d;
+
+    --zai-border: rgba(255, 255, 255, 0.10);
+    --zai-border-strong: rgba(255, 255, 255, 0.15);
+
+    --zai-accent: #9e77ed;
+    --zai-accent-hover: #b693f5;
+    --zai-accent-subtle: rgba(158, 119, 237, 0.12);
+    --zai-accent-text: #d9d1fb;
+    --zai-accent-border: rgba(158, 119, 237, 0.3);
+
+    --zai-success-subtle: rgba(30, 138, 62, 0.15);
+    --zai-danger-subtle: rgba(224, 49, 49, 0.15);
+    --zai-warning-subtle: rgba(224, 123, 0, 0.15);
+    --zai-info-subtle: rgba(11, 127, 255, 0.15);
+
+    --zai-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    --zai-shadow-lg: 0 10px 30px -5px rgba(0, 0, 0, 0.55), 0 4px 12px -2px rgba(0, 0, 0, 0.3);
+  }
+
+
+  html.dark #zai-sidebar button.zai-btn:hover {
+    background: rgba(255, 255, 255, 0.85);
+    border-color: rgba(255, 255, 255, 0.85);
+  }
+
+
+  html.dark .zai-modal-card {
+    background: #0d0d0d;
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.10);
+    box-shadow: 0 20px 60px -10px rgba(0, 0, 0, 0.6), 0 8px 24px -4px rgba(0, 0, 0, 0.4);
+  }
+
+
+  html.dark .zai-modal-header { border-bottom-color: rgba(255, 255, 255, 0.08); }
+
+
+  html.dark .zai-modal-header .zai-close { color: #9ca3af; }
+  html.dark .zai-modal-header .zai-close:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+  }
+
+
+  html.dark .zai-modal-footer { border-top-color: rgba(255, 255, 255, 0.08); }
+
+
+  html.dark .zai-modal-footer button {
+    background: #ffffff;
+    color: #0d0d0d;
+    border-color: #ffffff;
+  }
+
+
+  html.dark .zai-modal-footer button.zai-btn-ghost { border-color: rgba(255, 255, 255, 0.15); }
+
+
+  html.dark .zai-modal-footer button:hover { background: rgba(255, 255, 255, 0.85); }
+
+
+  html.dark .zai-modal-footer button.zai-btn-ghost:hover { background: rgba(255, 255, 255, 0.08); }
+
+
+  html.dark .zai-field-hint { color: #9ca3af; }
+
+
+  html.dark .zai-var-preview {
+    background: #1a1a1a;
+    color: #ffffff;
+    border-left-color: #ffffff;
+  }
+
+
+
+/* ---------- Tab bar ---------- */
+#zai-sidebar .zai-tabbar {
+  display: flex;
+  border-bottom: 1px solid var(--zai-border);
+  flex: 0 0 auto;
+  background: var(--zai-bg);
+}
+
+#zai-sidebar .zai-tab {
+  flex: 1 1 0;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  color: var(--zai-fg-secondary);
+  cursor: pointer;
+  font-family: var(--zai-font);
+  font-size: 13.5px;
+  font-weight: 500;
+  padding: 10px 8px;
+  transition: color var(--zai-transition), border-color var(--zai-transition), background var(--zai-transition);
+  border-radius: 0;
+  position: relative;
+  white-space: nowrap;
+}
+
+#zai-sidebar .zai-tab:hover {
+  color: var(--zai-fg);
+  background: var(--zai-bg-hover);
+}
+
+#zai-sidebar .zai-tab.active {
+  color: var(--zai-fg);
+  border-bottom-color: var(--zai-fg);
+}
+
+/* Dark mode — html.dark class support */
+html.dark #zai-sidebar .zai-tabbar {
+  border-bottom-color: var(--zai-border);
+  background: var(--zai-bg);
+}
+html.dark #zai-sidebar .zai-tab {
+  color: var(--zai-fg-secondary);
+}
+html.dark #zai-sidebar .zai-tab:hover {
+  color: var(--zai-fg);
+  background: var(--zai-bg-hover);
+}
+html.dark #zai-sidebar .zai-tab.active {
+  color: var(--zai-fg);
+  border-bottom-color: var(--zai-fg);
+}
+
+/* ---------- Tab panel ---------- */
+#zai-sidebar .zai-tabpanel {
+  display: none;
+}
+#zai-sidebar .zai-tabpanel.active {
+  display: block;
+}
+
+/* ---------- Status row (status pill + clear button inline) ---------- */
+#zai-sidebar .zai-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+#zai-sidebar .zai-status-row .zai-status {
+  flex: 1 1 auto;
+  margin: 0;
+}
+
+#zai-sidebar .zai-clear-btn {
+  flex: 0 0 auto;
+  padding: 5px 10px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+/* Clear button gets danger style only when queue is non-empty */
+#zai-sidebar .zai-clear-btn.has-items {
+  background: transparent;
+  color: var(--zai-danger);
+  border-color: var(--zai-danger);
+}
+#zai-sidebar .zai-clear-btn.has-items:hover {
+  background: var(--zai-danger-subtle);
+}
+
+/* ---------- Notes section ---------- */
+#zai-sidebar .zai-notes-section {
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+#zai-sidebar .zai-notes-textarea {
+  flex: 1 1 auto;
+  min-height: 280px;
+  width: 100%;
+  resize: none;
+  font-family: var(--zai-font);
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 10px 12px;
+  background: var(--zai-bg);
+  color: var(--zai-fg);
+  border: 1px solid var(--zai-border);
+  border-radius: var(--zai-radius-md);
+  transition: border-color var(--zai-transition), box-shadow var(--zai-transition);
+}
+
+#zai-sidebar .zai-notes-textarea::placeholder {
+  color: var(--zai-fg-placeholder);
+  font-style: italic;
+}
+
+#zai-sidebar .zai-notes-textarea:focus {
+  outline: none;
+  border-color: var(--zai-fg);
+  box-shadow: 0 0 0 1px var(--zai-fg);
+}
+
+#zai-sidebar .zai-notes-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  gap: 8px;
+}
+
+#zai-sidebar .zai-notes-status {
+  font-size: 12px;
+  color: var(--zai-fg-tertiary);
+  flex: 1 1 auto;
+}
+
+#zai-sidebar .zai-notes-clear {
+  flex: 0 0 auto;
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+#zai-sidebar .zai-notes-clear:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Dark mode support via html.dark */
+html.dark #zai-sidebar .zai-notes-textarea {
+  background: var(--zai-bg);
+  color: var(--zai-fg);
+}
+
+/* ---------- Tab bar update for 4 tabs ---------- */
+#zai-sidebar .zai-tab {
+  font-size: 12.5px;
+  padding: 9px 4px;
+}
+
+@media (max-width: 380px) {
+  #zai-sidebar .zai-tab {
+    font-size: 11.5px;
+    padding: 9px 2px;
+  }
+}
