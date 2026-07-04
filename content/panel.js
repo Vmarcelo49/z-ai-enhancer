@@ -198,6 +198,7 @@
     panels.autosend.appendChild(buildAutosendSection());
     panels.prompts.appendChild(buildPromptsSection());
     panels.notes.appendChild(buildNotesSection());
+    panels.settings.appendChild(buildLanguageSection());
     panels.settings.appendChild(buildNotificationsSection());
     panels.settings.appendChild(buildAutosendSettingsSection());
     panels.settings.appendChild(buildStatsSection());
@@ -236,15 +237,41 @@
     if (id === "settings") renderStats();
   }
 
+  // ---------- Language section (in Config. tab) ----------
+  function buildLanguageSection() {
+    const section = el("div", { class: "zai-section" });
+    section.appendChild(el("div", { class: "zai-section-title", text: t("lang.label") }));
+
+    const locales = window.__zaiI18n?.getAvailableLocales?.() || [];
+    const select = el("select", {
+      style: { width: "100%", padding: "5px 8px", borderRadius: "var(--zai-radius-md)",
+               border: "1px solid var(--zai-border)", background: "var(--zai-bg)",
+               color: "var(--zai-fg)", fontSize: "14px", fontFamily: "var(--zai-font)" },
+      onchange: (e) => window.__zaiI18n?.setLocale(e.target.value)
+    });
+    locales.forEach((locale) => {
+      const opt = el("option", { value: locale, text: t("lang." + locale) });
+      if (locale === window.__zaiI18n?.getLocale?.()) opt.selected = true;
+      select.appendChild(opt);
+    });
+
+    const row = el("div", { class: "zai-row" }, [
+      el("div", { class: "zai-row-label", text: t("lang.label") }),
+      select
+    ]);
+    section.appendChild(row);
+    return section;
+  }
+
   // ---------- Notifications section ----------
   function buildNotificationsSection() {
     const section = el("div", { class: "zai-section" });
     section.appendChild(el("div", { class: "zai-section-title", text: t("section.notifications") }));
 
-    section.appendChild(rowToggle("Som ao concluir", "soundEnabled"));
-    section.appendChild(rowToggle("Toast visual", "toastEnabled"));
-    section.appendChild(rowToggle("Notificação nativa", "nativeEnabled"));
-    section.appendChild(rowToggle("Só quando aba não focada", "nativeOnlyWhenUnfocused"));
+    section.appendChild(rowToggle(t("notif.sound_on_complete"), "soundEnabled"));
+    section.appendChild(rowToggle(t("notif.toast"), "toastEnabled"));
+    section.appendChild(rowToggle(t("notif.native"), "nativeEnabled"));
+    section.appendChild(rowToggle(t("notif.native_unfocused"), "nativeOnlyWhenUnfocused"));
 
     // Volume slider
     const volumeRow = el("label", { class: "zai-row" }, [
@@ -412,8 +439,8 @@
         el("div", {
           class: "zai-prompts-empty",
           text: all.length === 0
-            ? "Sem prompts. Clique em \"+ Novo prompt\" ou importe um arquivo."
-            : "Nenhum prompt corresponde à busca."
+            ? t("prompts.empty")
+            : t("prompts.no_match")
         })
       );
       return;
@@ -610,17 +637,17 @@
       el("button", {
         type: "button",
         class: "zai-btn",
-        text: p ? "Salvar" : "Criar",
+        text: p ? t("prompts.editor.save") : t("prompts.editor.create"),
         onclick: async () => {
           const title = titleInput.value.trim();
           const body = bodyInput.value;
           const category = catInput.value.trim() || "Geral";
           if (!title) {
-            showPromptsNotice("Título é obrigatório.", "error");
+            showPromptsNotice(t("prompts.editor.title_required"), "error");
             return;
           }
           if (!body.trim()) {
-            showPromptsNotice("Corpo do prompt é obrigatório.", "error");
+            showPromptsNotice(t("prompts.editor.body_required"), "error");
             return;
           }
           if (p) {
@@ -1005,7 +1032,7 @@
     if (!statsList) return;
     const durations = window.__zaiStats?.getRecent?.() || [];
     if (!durations.length) {
-      statsList.textContent = "Sem dados ainda.";
+      statsList.textContent = t("stats.empty");
       return;
     }
     const avg = durations.reduce((a, b) => a + b.durationMs, 0) / durations.length;
@@ -1124,7 +1151,7 @@
       statusText.textContent = t("queue.status_active", {n: itemCount, plural: plural(itemCount)});
     } else {
       statusPill.className = "zai-status idle";
-      statusText.textContent = "Fila vazia";
+      statusText.textContent = t("queue.status_idle");
     }
 
     const clearBtn = sidebarEl?.querySelector(".zai-clear-btn");
@@ -1200,6 +1227,19 @@
     });
     bus.on("prompts:changed", () => {
       renderPrompts();
+    });
+    // v0.12.1: re-build entire sidebar on locale change
+    bus.on("i18n:locale-changed", () => {
+      // Destroy and rebuild sidebar + FAB with new locale
+      if (sidebarEl) { sidebarEl.remove(); sidebarEl = null; }
+      if (fabEl) { fabEl.remove(); fabEl = null; }
+      visible = false;
+      buildFAB();
+      buildSidebar();
+      wireBus();
+      loadPrefs();
+      refreshQueueState();
+      toggle(true);
     });
   }
 

@@ -55,6 +55,8 @@
       "prompts.editor.body_placeholder": "Ex.: Revise o código abaixo apontando bugs:\n\n```\n{{code}}\n```",
       "prompts.editor.vars_detected": "Variáveis detectadas: {vars}",
       "prompts.editor.no_vars": "Nenhuma variável detectada.",
+      "prompts.editor.title_required": "Título é obrigatório.",
+      "prompts.editor.body_required": "Corpo do prompt é obrigatório.",
       "prompts.editor.cancel": "Cancelar",
       "prompts.editor.save": "Salvar",
       "prompts.editor.create": "Criar",
@@ -136,19 +138,56 @@
       "popup.testing_sound": "Tocando som…",
       "popup.testing_toast": "Mostrando toast…",
       // Prompt defaults
-      "prompt.default.explain_5": "Explicar como se eu tivesse 5 anos",
-      "prompt.default.review_code": "Revisar código",
-      "prompt.default.summarize": "Resumir em bullets",
+      "prompt.default.explain_5": "Explain like I'm 5",
+      "prompt.default.review_code": "Code review",
+      "prompt.default.summarize": "Summarize in bullets",
       "prompt.default.translate": "Traduzir para inglês",
-      "prompt.default.explain_5_body": "Explique o seguinte conceito como se eu tivesse 5 anos de idade:\n\n{{concept}}",
-      "prompt.default.review_code_body": "Revise o código abaixo apontando bugs, melhorias de legibilidade e sugestões de refatoração:\n\n```\n{{code}}\n```",
-      "prompt.default.summarize_body": "Resuma o texto a seguir em 5 bullets concisos:\n\n{{text}}",
+      "prompt.default.explain_5_body": "Explain the following concept as if I were 5 years old:\n\n{{concept}}",
+      "prompt.default.review_code_body": "Review the code below for bugs, readability improvements and refactoring suggestions:\n\n```\n{{code}}\n```",
+      "prompt.default.summarize_body": "Summarize the following text in 5 concise bullets:\n\n{{text}}",
       "prompt.default.translate_body": "Translate the following text to natural, fluent English (not literal):\n\n{{text}}",
       // Units
       "unit.seconds": "s",
       // Misc
       "misc.unknown": "desconhecido",
       "misc.confirm_delete_prompt": "Excluir \"{title}\"?",
+
+      // Language selector
+      "lang.label": "Idioma",
+      "lang.pt-BR": "Português (Brasil)",
+      "lang.en-US": "English",
+      "lang.zh-CN": "中文",
+      "lang.es": "Español",
+
+      // Onboarding page
+      "onboarding.title": "Z.ai Enhancer está instalado",
+      "onboarding.subtitle": "Um painel flutuante que torna o chat.z.ai mais poderoso — alertas sonoros e visuais quando o agente termina, uma fila de envio automático e uma biblioteca de prompts reutilizável.",
+      "onboarding.features": "O que você ganha",
+      "onboarding.feat_sound_title": "Som + toast ao concluir",
+      "onboarding.feat_sound_desc": "Receba um chime audível e um pequeno toast quando o agente termina de responder — mesmo se você estiver em outra aba.",
+      "onboarding.feat_queue_title": "Fila de envio automático",
+      "onboarding.feat_queue_desc": "Agende uma sequência de mensagens. A próxima é enviada automaticamente assim que o agente termina a resposta anterior.",
+      "onboarding.feat_prompts_title": "Biblioteca de prompts",
+      "onboarding.feat_prompts_desc": "Salve prompts reutilizáveis com {{variáveis}}. Clique num prompt, preencha as variáveis e ele vai direto pro chat.",
+      "onboarding.feat_stats_title": "Estatísticas de resposta",
+      "onboarding.feat_stats_desc": "Veja a duração média das respostas recentes do agente para identificar lentidão.",
+      "onboarding.how_title": "Como usar",
+      "onboarding.how_1": "Abra o chat.z.ai e faça login.",
+      "onboarding.how_2": "Você verá um botão circular no canto inferior direito — clique para abrir o painel.",
+      "onboarding.how_3": "O painel tem 4 abas: Notificações, Prompts, Auto-Send e Configurações.",
+      "onboarding.how_4": "Você também pode usar atalhos de teclado (veja abaixo).",
+      "onboarding.shortcuts_title": "Atalhos de teclado",
+      "onboarding.shortcuts_action": "Ação",
+      "onboarding.shortcuts_key": "Atalho",
+      "onboarding.shortcuts_open": "Abrir o painel no chat.z.ai",
+      "onboarding.shortcuts_sound": "Ligar/desligar som ao concluir",
+      "onboarding.shortcuts_stop": "Clicar no botão Stop do agente",
+      "onboarding.shortcuts_hint": "No macOS, use Cmd em vez de Ctrl para o primeiro atalho. Personalize em about:addons → ⚙ → Atalhos de Extensão.",
+      "onboarding.privacy_title": "Privacidade",
+      "onboarding.privacy_desc": "Esta extensão não coleta nenhum dado pessoal. Todos os seus prompts, fila e anotações são armazenados localmente no Firefox e nunca saem do seu dispositivo. Sem analytics, sem telemetria, sem código remoto.",
+      "onboarding.cta_open": "Abrir chat.z.ai →",
+      "onboarding.cta_source": "Ver código-fonte no GitHub",
+      "onboarding.welcome": "Bem-vindo",
     },
 
     "en-US": {
@@ -189,6 +228,8 @@
       "prompts.editor.body_placeholder": "e.g. Review the code below for bugs:\n\n```\n{{code}}\n```",
       "prompts.editor.vars_detected": "Variables detected: {vars}",
       "prompts.editor.no_vars": "No variables detected.",
+      "prompts.editor.title_required": "Title is required.",
+      "prompts.editor.body_required": "Prompt body is required.",
       "prompts.editor.cancel": "Cancel",
       "prompts.editor.save": "Save",
       "prompts.editor.create": "Create",
@@ -272,6 +313,41 @@
       "unit.seconds": "s",
       "misc.unknown": "unknown",
       "misc.confirm_delete_prompt": "Delete \"{title}\"?",
+
+      "lang.label": "Language",
+      "lang.pt-BR": "Português (Brasil)",
+      "lang.en-US": "English",
+      "lang.zh-CN": "中文",
+      "lang.es": "Español",
+
+      "onboarding.title": "Z.ai Enhancer is installed",
+      "onboarding.subtitle": "A floating panel that makes chat.z.ai more powerful — sound + visual alerts when the agent finishes, an auto-send queue, and a reusable prompt library.",
+      "onboarding.features": "What you get",
+      "onboarding.feat_sound_title": "Sound + toast on completion",
+      "onboarding.feat_sound_desc": "Get an audible chime and a small toast when the agent finishes responding — even if you're in another tab.",
+      "onboarding.feat_queue_title": "Auto-send queue",
+      "onboarding.feat_queue_desc": "Schedule a sequence of messages. The next one is sent automatically once the agent finishes the previous response.",
+      "onboarding.feat_prompts_title": "Prompt library",
+      "onboarding.feat_prompts_desc": "Save reusable prompts with {{variables}}. Click a prompt, fill in the variables, and it goes straight to the chat.",
+      "onboarding.feat_stats_title": "Response stats",
+      "onboarding.feat_stats_desc": "See the average duration of recent agent responses so you can spot slowdowns.",
+      "onboarding.how_title": "How to use it",
+      "onboarding.how_1": "Open chat.z.ai and sign in.",
+      "onboarding.how_2": "You'll see a circular button (FAB) in the bottom-right corner — click it to open the panel.",
+      "onboarding.how_3": "The panel has 4 tabs: Notifications, Prompts, Auto-Send, and Settings.",
+      "onboarding.how_4": "You can also use keyboard shortcuts (see below).",
+      "onboarding.shortcuts_title": "Keyboard shortcuts",
+      "onboarding.shortcuts_action": "Action",
+      "onboarding.shortcuts_key": "Shortcut",
+      "onboarding.shortcuts_open": "Open the panel on chat.z.ai",
+      "onboarding.shortcuts_sound": "Toggle completion sound on/off",
+      "onboarding.shortcuts_stop": "Click the agent Stop button",
+      "onboarding.shortcuts_hint": "On macOS, use Cmd instead of Ctrl for the first shortcut. Customize at about:addons → ⚙ → Extension Shortcuts.",
+      "onboarding.privacy_title": "Privacy",
+      "onboarding.privacy_desc": "This extension collects no personal data. All your prompts, queue, and notes are stored locally in Firefox and never leave your device. No analytics, no telemetry, no remote code.",
+      "onboarding.cta_open": "Open chat.z.ai →",
+      "onboarding.cta_source": "View source on GitHub",
+      "onboarding.welcome": "Welcome",
     },
 
     "zh-CN": {
@@ -312,6 +388,8 @@
       "prompts.editor.body_placeholder": "例如：审查以下代码的错误：\n\n```\n{{code}}\n```",
       "prompts.editor.vars_detected": "检测到的变量：{vars}",
       "prompts.editor.no_vars": "未检测到变量。",
+      "prompts.editor.title_required": "标题为必填项。",
+      "prompts.editor.body_required": "提示词内容为必填项。",
       "prompts.editor.cancel": "取消",
       "prompts.editor.save": "保存",
       "prompts.editor.create": "创建",
@@ -395,6 +473,41 @@
       "unit.seconds": "秒",
       "misc.unknown": "未知",
       "misc.confirm_delete_prompt": "删除\"{title}\"？",
+
+      "lang.label": "语言",
+      "lang.pt-BR": "Português (Brasil)",
+      "lang.en-US": "English",
+      "lang.zh-CN": "中文",
+      "lang.es": "Español",
+
+      "onboarding.title": "Z.ai Enhancer 已安装",
+      "onboarding.subtitle": "一个让 chat.z.ai 更强大的浮动面板 — 代理完成时的声音和视觉提醒、自动发送队列和可重用的提示词库。",
+      "onboarding.features": "您将获得",
+      "onboarding.feat_sound_title": "完成时声音 + 提示",
+      "onboarding.feat_sound_desc": "代理完成回复时听到声音提示并看到小弹窗 — 即使您在其他标签页。",
+      "onboarding.feat_queue_title": "自动发送队列",
+      "onboarding.feat_queue_desc": "安排一系列消息。代理完成上一条回复后自动发送下一条。",
+      "onboarding.feat_prompts_title": "提示词库",
+      "onboarding.feat_prompts_desc": "保存带{{变量}}的可重用提示词。点击提示词，填写变量，直接发送到聊天。",
+      "onboarding.feat_stats_title": "回复统计",
+      "onboarding.feat_stats_desc": "查看最近代理回复的平均时长，发现变慢的情况。",
+      "onboarding.how_title": "如何使用",
+      "onboarding.how_1": "打开 chat.z.ai 并登录。",
+      "onboarding.how_2": "您会在右下角看到一个圆形按钮 — 点击打开面板。",
+      "onboarding.how_3": "面板有4个标签页：通知、提示词、自动发送和设置。",
+      "onboarding.how_4": "您也可以使用键盘快捷键（见下文）。",
+      "onboarding.shortcuts_title": "键盘快捷键",
+      "onboarding.shortcuts_action": "操作",
+      "onboarding.shortcuts_key": "快捷键",
+      "onboarding.shortcuts_open": "在 chat.z.ai 上打开面板",
+      "onboarding.shortcuts_sound": "切换完成声音开/关",
+      "onboarding.shortcuts_stop": "点击代理停止按钮",
+      "onboarding.shortcuts_hint": "在 macOS 上，第一个快捷键用 Cmd 代替 Ctrl。在 about:addons → ⚙ → 扩展快捷键 中自定义。",
+      "onboarding.privacy_title": "隐私",
+      "onboarding.privacy_desc": "此扩展不收集任何个人数据。所有提示词、队列和笔记都存储在 Firefox 本地，永远不会离开您的设备。无分析、无遥测、无远程代码。",
+      "onboarding.cta_open": "打开 chat.z.ai →",
+      "onboarding.cta_source": "在 GitHub 查看源码",
+      "onboarding.welcome": "欢迎",
     },
 
     "es": {
@@ -435,6 +548,8 @@
       "prompts.editor.body_placeholder": "Ej.: Revisa el código buscando errores:\n\n```\n{{code}}\n```",
       "prompts.editor.vars_detected": "Variables detectadas: {vars}",
       "prompts.editor.no_vars": "Sin variables detectadas.",
+      "prompts.editor.title_required": "El título es obligatorio.",
+      "prompts.editor.body_required": "El cuerpo del prompt es obligatorio.",
       "prompts.editor.cancel": "Cancelar",
       "prompts.editor.save": "Guardar",
       "prompts.editor.create": "Crear",
@@ -508,7 +623,7 @@
       "popup.testing_sound": "Reproduciendo sonido…",
       "popup.testing_toast": "Mostrando toast…",
       "prompt.default.explain_5": "Explicar como si tuviera 5 años",
-      "prompt.default.review_code": "Revisar código",
+      "prompt.default.review_code": "Code review",
       "prompt.default.summarize": "Resumir en viñetas",
       "prompt.default.translate": "Traducir al inglés",
       "prompt.default.explain_5_body": "Explica el siguiente concepto como si tuviera 5 años:\n\n{{concept}}",
@@ -518,14 +633,46 @@
       "unit.seconds": "s",
       "misc.unknown": "desconocido",
       "misc.confirm_delete_prompt": "¿Eliminar \"{title}\"?",
+
+      "lang.label": "Idioma",
+      "lang.pt-BR": "Português (Brasil)",
+      "lang.en-US": "English",
+      "lang.zh-CN": "中文",
+      "lang.es": "Español",
+
+      "onboarding.title": "Z.ai Enhancer está instalado",
+      "onboarding.subtitle": "Un panel flotante que hace chat.z.ai más potente — alertas sonoras y visuales cuando el agente termina, una cola de envío automático y una biblioteca de prompts reutilizable.",
+      "onboarding.features": "Lo que obtienes",
+      "onboarding.feat_sound_title": "Sonido + toast al completar",
+      "onboarding.feat_sound_desc": "Recibe un tono audible y un pequeño toast cuando el agente termina de responder — incluso si estás en otra pestaña.",
+      "onboarding.feat_queue_title": "Cola de envío automático",
+      "onboarding.feat_queue_desc": "Programa una secuencia de mensajes. El siguiente se envía automáticamente cuando el agente termina la respuesta anterior.",
+      "onboarding.feat_prompts_title": "Biblioteca de prompts",
+      "onboarding.feat_prompts_desc": "Guarda prompts reutilizables con {{variables}}. Haz clic en un prompt, rellena las variables y va directo al chat.",
+      "onboarding.feat_stats_title": "Estadísticas de respuesta",
+      "onboarding.feat_stats_desc": "Ve la duración media de las respuestas recientes del agente para detectar lentitud.",
+      "onboarding.how_title": "Cómo usarlo",
+      "onboarding.how_1": "Abre chat.z.ai e inicia sesión.",
+      "onboarding.how_2": "Verás un botón circular en la esquina inferior derecha — haz clic para abrir el panel.",
+      "onboarding.how_3": "El panel tiene 4 pestañas: Notificaciones, Prompts, Auto-Envío y Configuración.",
+      "onboarding.how_4": "También puedes usar atajos de teclado (ver abajo).",
+      "onboarding.shortcuts_title": "Atajos de teclado",
+      "onboarding.shortcuts_action": "Acción",
+      "onboarding.shortcuts_key": "Atajo",
+      "onboarding.shortcuts_open": "Abrir el panel en chat.z.ai",
+      "onboarding.shortcuts_sound": "Activar/desactivar sonido al completar",
+      "onboarding.shortcuts_stop": "Clic en el botón Stop del agente",
+      "onboarding.shortcuts_hint": "En macOS, usa Cmd en vez de Ctrl para el primer atajo. Personaliza en about:addons → ⚙ → Atajos de Extensiones.",
+      "onboarding.privacy_title": "Privacidad",
+      "onboarding.privacy_desc": "Esta extensión no recoge ningún dato personal. Todos tus prompts, cola y notas se guardan localmente en Firefox y nunca salen de tu dispositivo. Sin analytics, sin telemetría, sin código remoto.",
+      "onboarding.cta_open": "Abrir chat.z.ai →",
+      "onboarding.cta_source": "Ver código en GitHub",
+      "onboarding.welcome": "Bienvenido",
     }
   };
 
   // ---------- locale detection ----------
   function detectLocale() {
-    // 1. Check user-set preference in storage
-    // 2. Check navigator.language
-    // 3. Default to pt-BR
     const nav = (navigator.language || "pt-BR").toLowerCase();
     if (nav.startsWith("pt")) return "pt-BR";
     if (nav.startsWith("en")) return "en-US";
@@ -535,6 +682,16 @@
   }
 
   let currentLocale = detectLocale();
+
+  // Load saved locale from storage (overrides browser detection)
+  try {
+    browser?.storage?.local?.get(["zai_locale"]).then((p) => {
+      if (p.zai_locale && MESSAGES[p.zai_locale]) {
+        currentLocale = p.zai_locale;
+        window.__zaiBus?.emit?.("i18n:locale-changed", { locale: currentLocale });
+      }
+    });
+  } catch (_) {}
 
   // ---------- t(key, params) ----------
   function t(key, params) {
@@ -559,6 +716,7 @@
     setLocale: (locale) => {
       if (MESSAGES[locale]) {
         currentLocale = locale;
+        try { browser?.storage?.local?.set({ zai_locale: locale }); } catch (_) {}
         window.__zaiBus?.emit?.("i18n:locale-changed", { locale });
       }
     },

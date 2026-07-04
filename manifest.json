@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Z.ai Enhancer",
-  "version": "0.12.0",
+  "version": "0.12.2",
   "description": "Floating panel for chat.z.ai: sound + visual notifications when the agent finishes responding, auto-send queue, and a reusable prompt library with {{variables}}.",
   "browser_specific_settings": {
     "gecko": {
@@ -47,8 +47,12 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["content/page-hook.js"],
+      "resources": ["content/page-hook.js", "content/i18n.js"],
       "matches": ["https://chat.z.ai/*"]
+    },
+    {
+      "resources": ["content/i18n.js"],
+      "matches": ["<all_urls>"]
     }
   ],
   "background": {

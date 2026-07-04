@@ -11,38 +11,53 @@
     <div class="logo">Z</div>
     <div>
       <h1>Z.ai Enhancer</h1>
-      <p class="muted">v0.3.0</p>
+      <p class="muted" id="version">v0.12.1</p>
     </div>
   </header>
 
   <main>
-    <button id="openPanel" type="button" class="primary">
+    <button id="openPanel" type="button" class="primary" data-i18n="popup.open_panel">
       🚀 Abrir painel no site
     </button>
-    <p class="hint" id="panelHint">Use o botão flutuante no canto inferior direito de chat.z.ai — não precisa mais abrir este popup.</p>
+    <p class="hint" id="panelHint" data-i18n="popup.hint">
+      Use o botão flutuante no canto inferior direito de chat.z.ai — não precisa mais abrir este popup.
+    </p>
+
+    <hr />
+
+    <!-- Language selector -->
+    <label class="row">
+      <span data-i18n="lang.label">Idioma</span>
+      <select id="langSelect" style="width: 130px; accent-color: var(--accent);">
+        <option value="pt-BR">Português (Brasil)</option>
+        <option value="en-US">English</option>
+        <option value="zh-CN">中文</option>
+        <option value="es">Español</option>
+      </select>
+    </label>
 
     <hr />
 
     <label class="row">
-      <span>Som ao concluir</span>
+      <span data-i18n="notif.sound_on_complete">Som ao concluir</span>
       <input type="checkbox" id="soundEnabled" />
     </label>
     <label class="row">
-      <span>Toast visual</span>
+      <span data-i18n="notif.toast">Toast visual</span>
       <input type="checkbox" id="toastEnabled" />
     </label>
     <label class="row">
-      <span>Notificação nativa</span>
+      <span data-i18n="notif.native">Notificação nativa</span>
       <input type="checkbox" id="nativeEnabled" />
     </label>
     <label class="row">
-      <span>Volume</span>
+      <span data-i18n="notif.volume">Volume</span>
       <input type="range" id="soundVolume" min="0" max="1" step="0.05" />
     </label>
 
     <div class="actions">
-      <button id="testSound" type="button">🔊 Testar som</button>
-      <button id="testToast" type="button">🔔 Testar toast</button>
+      <button id="testSound" type="button" data-i18n="notif.test_sound">🔊 Testar som</button>
+      <button id="testToast" type="button" data-i18n="notif.test_toast">🔔 Testar toast</button>
     </div>
 
     <p class="status" id="status"></p>

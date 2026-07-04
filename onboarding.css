@@ -177,3 +177,21 @@ footer {
   text-align: center;
 }
 footer a { color: var(--muted); }
+
+/* Language selector */
+.lang-selector {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
+.lang-selector select {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--fg);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}

@@ -1,18 +1,8 @@
-/* popup.js — v0.3.0
- * Simplified: primary UI is now the in-page panel on chat.z.ai.
- * This popup is just a quick-toggle shortcut + "open panel" launcher.
+/* popup.js — v0.12.1
+ * Toolbar popup with i18n + language selector.
+ * Uses inline i18n (can't access content script's window.__zaiI18n).
  */
-const DEFAULTS = {
-  soundEnabled: true,
-  toastEnabled: true,
-  nativeEnabled: true,
-  nativeOnlyWhenUnfocused: true,
-  soundVolume: 0.6
-};
 
-const $ = (id) => document.getElementById(id);
-
-// ---------- i18n ----------
 const POPUP_I18N = {
   "pt-BR": {
     open_panel: "🚀 Abrir painel no site",
@@ -25,7 +15,10 @@ const POPUP_I18N = {
     sound_on_complete: "Som ao concluir",
     toast_visual: "Toast visual",
     notif_native: "Notificação nativa",
-    volume: "Volume"
+    volume: "Volume",
+    test_sound: "🔊 Testar som",
+    test_toast: "🔔 Testar toast",
+    lang_label: "Idioma"
   },
   "en-US": {
     open_panel: "🚀 Open panel on site",
@@ -38,7 +31,10 @@ const POPUP_I18N = {
     sound_on_complete: "Sound on completion",
     toast_visual: "Visual toast",
     notif_native: "Native notification",
-    volume: "Volume"
+    volume: "Volume",
+    test_sound: "🔊 Test sound",
+    test_toast: "🔔 Test toast",
+    lang_label: "Language"
   },
   "zh-CN": {
     open_panel: "🚀 在网站上打开面板",
@@ -51,7 +47,10 @@ const POPUP_I18N = {
     sound_on_complete: "完成时声音",
     toast_visual: "视觉提示",
     notif_native: "原生通知",
-    volume: "音量"
+    volume: "音量",
+    test_sound: "🔊 测试声音",
+    test_toast: "🔔 测试提示",
+    lang_label: "语言"
   },
   "es": {
     open_panel: "🚀 Abrir panel en el sitio",
@@ -64,19 +63,53 @@ const POPUP_I18N = {
     sound_on_complete: "Sonido al completar",
     toast_visual: "Toast visual",
     notif_native: "Notificación nativa",
-    volume: "Volumen"
+    volume: "Volumen",
+    test_sound: "🔊 Probar sonido",
+    test_toast: "🔔 Probar toast",
+    lang_label: "Idioma"
   }
 };
 
-function getPopupI18n() {
-  const uiLang = (browser.i18n?.getUILanguage?.() || "pt-BR").toLowerCase();
-  let locale = "pt-BR";
-  if (uiLang.startsWith("en")) locale = "en-US";
-  else if (uiLang.startsWith("zh")) locale = "zh-CN";
-  else if (uiLang.startsWith("es")) locale = "es";
-  return POPUP_I18N[locale] || POPUP_I18N["pt-BR"];
+function detectLocale() {
+  const nav = (browser.i18n?.getUILanguage?.() || "pt-BR").toLowerCase();
+  if (nav.startsWith("pt")) return "pt-BR";
+  if (nav.startsWith("en")) return "en-US";
+  if (nav.startsWith("zh")) return "zh-CN";
+  if (nav.startsWith("es")) return "es";
+  return "pt-BR";
 }
-const pti18n = getPopupI18n();
+
+let currentLocale = detectLocale();
+const $ = (id) => document.getElementById(id);
+
+function applyI18n() {
+  const msgs = POPUP_I18N[currentLocale] || POPUP_I18N["pt-BR"];
+  // Apply to all [data-i18n] elements
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    const key = el.getAttribute("data-i18n");
+    if (msgs[key]) el.textContent = msgs[key];
+  });
+  // Set lang select value
+  $("langSelect").value = currentLocale;
+}
+
+async function loadSavedLocale() {
+  try {
+    const p = await browser.storage.local.get(["zai_locale"]);
+    if (p.zai_locale && POPUP_I18N[p.zai_locale]) {
+      currentLocale = p.zai_locale;
+    }
+  } catch (_) {}
+  applyI18n();
+}
+
+const DEFAULTS = {
+  soundEnabled: true,
+  toastEnabled: true,
+  nativeEnabled: true,
+  nativeOnlyWhenUnfocused: true,
+  soundVolume: 0.6
+};
 
 async function loadPrefs() {
   try {
@@ -95,7 +128,8 @@ async function sendToChatTab(message) {
   try {
     const tabs = await browser.tabs.query({ url: "https://chat.z.ai/*" });
     if (!tabs.length) {
-      $("status").textContent = pti18n.no_tab;
+      const msgs = POPUP_I18N[currentLocale] || POPUP_I18N["pt-BR"];
+      $("status").textContent = msgs.no_tab;
       return false;
     }
     for (const t of tabs) {
@@ -108,7 +142,9 @@ async function sendToChatTab(message) {
 }
 
 (async function init() {
+  await loadSavedLocale();
   const prefs = await loadPrefs();
+  const msgs = POPUP_I18N[currentLocale] || POPUP_I18N["pt-BR"];
 
   $("soundEnabled").checked = prefs.soundEnabled;
   $("toastEnabled").checked = prefs.toastEnabled;
@@ -120,25 +156,35 @@ async function sendToChatTab(message) {
   $("nativeEnabled").addEventListener("change", (e) => savePref("nativeEnabled", e.target.checked));
   $("soundVolume").addEventListener("change", (e) => savePref("soundVolume", parseFloat(e.target.value)));
 
+  // Language selector
+  $("langSelect").addEventListener("change", async (e) => {
+    currentLocale = e.target.value;
+    try { await browser.storage.local.set({ zai_locale: currentLocale }); } catch (_) {}
+    applyI18n();
+  });
+
   $("openPanel").addEventListener("click", async () => {
     const ok = await sendToChatTab({ type: "open-panel" });
     if (!ok) {
-      // No chat.z.ai tab — open one
       await browser.tabs.create({ url: "https://chat.z.ai/" });
-      $("status").textContent = pti18n.opening;
+      const msgs2 = POPUP_I18N[currentLocale] || POPUP_I18N["pt-BR"];
+      $("status").textContent = msgs2.opening;
     } else {
-      $("status").textContent = pti18n.panel_opened;
+      const msgs2 = POPUP_I18N[currentLocale] || POPUP_I18N["pt-BR"];
+      $("status").textContent = msgs2.panel_opened;
       window.close();
     }
   });
 
   $("testSound").addEventListener("click", async () => {
-    $("status").textContent = pti18n.testing_sound;
+    const msgs2 = POPUP_I18N[currentLocale] || POPUP_I18N["pt-BR"];
+    $("status").textContent = msgs2.testing_sound;
     await sendToChatTab({ source: "zai-enhancer-ui", type: "test-sound" });
     setTimeout(() => ($("status").textContent = ""), 1500);
   });
   $("testToast").addEventListener("click", async () => {
-    $("status").textContent = pti18n.testing_toast;
+    const msgs2 = POPUP_I18N[currentLocale] || POPUP_I18N["pt-BR"];
+    $("status").textContent = msgs2.testing_toast;
     await sendToChatTab({ source: "zai-enhancer-ui", type: "test-toast" });
     setTimeout(() => ($("status").textContent = ""), 1500);
   });
