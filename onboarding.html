@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Z.ai Enhancer — Welcome</title>
+  <link rel="stylesheet" href="onboarding.css" />
+</head>
+<body>
+  <main class="container">
+    <header class="hero">
+      <div class="logo">Z</div>
+      <h1>Z.ai Enhancer is installed</h1>
+      <p class="subtitle">A floating panel that makes chat.z.ai more powerful — sound + visual alerts when the agent finishes, an auto-send queue, and a reusable prompt library.</p>
+    </header>
+
+    <section class="features">
+      <h2>What you get</h2>
+      <ul>
+        <li>
+          <span class="icon">🔊</span>
+          <div>
+            <strong>Sound + toast on completion</strong>
+            <p>Get an audible chime and a small toast when the agent finishes responding — even if you're in another tab.</p>
+          </div>
+        </li>
+        <li>
+          <span class="icon">📨</span>
+          <div>
+            <strong>Auto-send queue</strong>
+            <p>Schedule a sequence of messages. The next one is sent automatically once the agent finishes the previous response.</p>
+          </div>
+        </li>
+        <li>
+          <span class="icon">📚</span>
+          <div>
+            <strong>Prompt library</strong>
+            <p>Save reusable prompts with <code>{{variables}}</code>. Click a prompt, fill in the variables, and it goes straight to the chat.</p>
+          </div>
+        </li>
+        <li>
+          <span class="icon">📊</span>
+          <div>
+            <strong>Response stats</strong>
+            <p>See the average duration of recent agent responses so you can spot slowdowns.</p>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <section class="how">
+      <h2>How to use it</h2>
+      <ol>
+        <li>Open <a href="https://chat.z.ai/" target="_blank" rel="noopener">chat.z.ai</a> and sign in.</li>
+        <li>You'll see a circular purple button (FAB) in the bottom-right corner — click it to open the panel.</li>
+        <li>The panel has 4 sections: <strong>Notifications</strong>, <strong>Prompts</strong>, <strong>Auto-Send</strong>, and <strong>Stats</strong>.</li>
+        <li>You can also use keyboard shortcuts (see below).</li>
+      </ol>
+    </section>
+
+    <section class="shortcuts">
+      <h2>Keyboard shortcuts</h2>
+      <table>
+        <thead><tr><th>Action</th><th>Shortcut</th></tr></thead>
+        <tbody>
+          <tr><td>Open the panel on chat.z.ai</td><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd></td></tr>
+          <tr><td>Toggle completion sound</td><td><kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd></td></tr>
+          <tr><td>Click the agent Stop button</td><td><kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>X</kbd></td></tr>
+        </tbody>
+      </table>
+      <p class="hint">On macOS, use <kbd>Cmd</kbd> instead of <kbd>Ctrl</kbd> for the first shortcut. Customize at <code>about:addons → ⚙ → Extension Shortcuts</code>.</p>
+    </section>
+
+    <section class="privacy">
+      <h2>Privacy</h2>
+      <p>
+        This extension collects <strong>no personal data</strong>. All your prompts, queue, and stats are stored locally in Firefox and never leave your device.
+        The extension has no analytics, no telemetry, no remote code loading. See the <a href="PRIVACY.md" target="_blank">full privacy policy</a>.
+      </p>
+    </section>
+
+    <section class="cta">
+      <a class="btn-primary" href="https://chat.z.ai/" target="_blank" rel="noopener">Open chat.z.ai →</a>
+      <a class="btn-secondary" href="https://github.com/Vmarcelo49/z-ai-enhancer" target="_blank" rel="noopener">View source on GitHub</a>
+    </section>
+
+    <footer>
+      <p>Z.ai Enhancer · v0.5.0 · MIT License · <a href="PRIVACY.md" target="_blank">Privacy</a> · <a href="CHANGELOG.md" target="_blank">Changelog</a></p>
+    </footer>
+  </main>
+</body>
+</html>

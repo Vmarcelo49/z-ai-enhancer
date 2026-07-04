@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Z.ai Enhancer — Configurações</title>
+  <link rel="stylesheet" href="popup.css" />
+  <style>
+    html, body { width: 100%; max-width: 560px; margin: 24px auto; padding: 0 16px 40px; }
+    h2 { font-size: 16px; margin: 24px 0 8px; }
+    .hint { color: var(--muted); font-size: 12px; margin: 4px 0 8px; }
+    .row { padding: 10px 8px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Z</div>
+    <div>
+      <h1>Z.ai Enhancer</h1>
+      <p class="muted">Configurações</p>
+    </div>
+  </header>
+
+  <h2>Notificações</h2>
+  <p class="hint">Defina como você quer ser avisado quando o agente termina de responder.</p>
+
+  <label class="row">
+    <span>Som ao concluir</span>
+    <input type="checkbox" id="soundEnabled" />
+  </label>
+  <label class="row">
+    <span>Toast visual na página</span>
+    <input type="checkbox" id="toastEnabled" />
+  </label>
+  <label class="row">
+    <span>Notificação nativa do Firefox</span>
+    <input type="checkbox" id="nativeEnabled" />
+  </label>
+  <label class="row">
+    <span>Só notificar quando a aba NÃO estiver focada</span>
+    <input type="checkbox" id="nativeOnlyWhenUnfocused" />
+  </label>
+
+  <h2>Áudio</h2>
+  <label class="row">
+    <span>Volume do som</span>
+    <input type="range" id="soundVolume" min="0" max="1" step="0.05" />
+  </label>
+
+  <h2>Toast</h2>
+  <label class="row">
+    <span>Auto-fechar após (ms)</span>
+    <input type="number" id="toastAutoDismissMs" min="0" step="500" style="width:100px" />
+  </label>
+
+  <div class="actions">
+    <button id="testSound" type="button">🔊 Testar som</button>
+    <button id="testToast" type="button">🔔 Testar toast</button>
+  </div>
+  <p class="status" id="status"></p>
+
+  <script src="popup.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

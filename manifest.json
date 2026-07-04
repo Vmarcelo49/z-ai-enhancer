@@ -1,0 +1,95 @@
+{
+  "manifest_version": 3,
+  "name": "Z.ai Enhancer",
+  "version": "0.11.0",
+  "description": "Floating panel for chat.z.ai: sound + visual notifications when the agent finishes responding, auto-send queue, and a reusable prompt library with {{variables}}.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "zai-enhancer@vmarcelo.dev",
+      "strict_min_version": "140.0",
+      "data_collection_permissions": {
+        "required": ["none"],
+        "optional": []
+      }
+    },
+    "gecko_android": {
+      "strict_min_version": "142.0"
+    }
+  },
+  "developer": {
+    "name": "Vmarcelo",
+    "url": "https://github.com/Vmarcelo49/z-ai-enhancer"
+  },
+  "homepage_url": "https://github.com/Vmarcelo49/z-ai-enhancer",
+  "permissions": ["notifications", "storage"],
+  "host_permissions": ["https://chat.z.ai/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://chat.z.ai/*"],
+      "js": [
+        "content/event-bus.js",
+        "content/send-utils.js",
+        "content/sound.js",
+        "content/toast.js",
+        "content/stats.js",
+        "content/prompts.js",
+        "content/detectors.js",
+        "content/autosend.js",
+        "content/notes.js",
+        "content/panel.js",
+        "content/main.js"
+      ],
+      "css": ["content/toast.css", "content/panel.css"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["content/page-hook.js"],
+      "matches": ["https://chat.z.ai/*"]
+    }
+  ],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  },
+  "action": {
+    "default_title": "Z.ai Enhancer — open in-page panel",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "48": "icons/icon-48.png",
+      "96": "icons/icon-96.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "icons": {
+    "48": "icons/icon-48.png",
+    "96": "icons/icon-96.png",
+    "128": "icons/icon-128.png"
+  },
+  "commands": {
+    "open-panel": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Z",
+        "mac": "MacCtrl+Shift+Z"
+      },
+      "description": "Open the Z.ai Enhancer panel on the current chat.z.ai tab"
+    },
+    "toggle-sound": {
+      "suggested_key": {
+        "default": "Alt+Shift+S"
+      },
+      "description": "Toggle the completion sound on/off"
+    },
+    "trigger-stop": {
+      "suggested_key": {
+        "default": "Alt+Shift+X"
+      },
+      "description": "Click the agent Stop button (if visible)"
+    }
+  }
+}
