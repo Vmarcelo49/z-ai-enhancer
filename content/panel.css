@@ -234,6 +234,27 @@
   #zai-fab.zai-queue-active::before { animation: none; }
 }
 
+/* ---------- Mobile (Android Firefox) ----------
+   On Android, chat.z.ai's send button sits at the bottom-right corner, which
+   is exactly where the FAB lives by default. Moving the FAB to the top-right
+   avoids the overlap. The class is added to <html> by panel.js based on
+   navigator.userAgent. iOS Safari is intentionally not matched because z.ai
+   doesn't officially support iOS via this extension. */
+html.zai-mobile #zai-fab {
+  top: 12px;
+  right: 12px;
+  bottom: auto;
+  /* Slightly smaller on mobile to stay out of the way of the header */
+  width: 36px;
+  height: 36px;
+}
+
+/* When the sidebar is open on mobile, the FAB slides off the top edge so it
+   doesn't sit on top of the sidebar's close button. */
+html.zai-mobile #zai-fab.zai-open {
+  top: -50px;
+}
+
 /* ---------- Sidebar header ---------- */
 #zai-sidebar .zai-header {
   display: flex;

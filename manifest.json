@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Z.ai Enhancer",
-  "version": "0.12.2",
+  "version": "0.12.3",
   "description": "Floating panel for chat.z.ai: sound + visual notifications when the agent finishes responding, auto-send queue, and a reusable prompt library with {{variables}}.",
   "browser_specific_settings": {
     "gecko": {

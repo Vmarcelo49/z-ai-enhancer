@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.12.3 — 2026-07-08 (fix Android + fix detecção)
+- **Fix (crítico):** Detecção de fim de mensagem quebrada desde v0.11.0
+  - `page-hook.js` linha 52 referenciava `cloneForObservation` que nunca era definido — `ReferenceError` síncrono fazia `stream-end` disparar com erro imediatamente após `stream-start`
+  - Sintoma: som/toast/fila só funcionavam quando o stream falhava dentro da janela de confirmação de 2.5s (respostas curtas ou com erro)
+  - Corrigido: agora `response.clone()` é chamado e o stream-end dispara quando o body do clone é totalmente drenado
+  - `detectors.js` agora propaga `error` do `stream-end` até o evento `agent:done` (o handler de erro em `autosend.js` estava morto)
+  - `toast.js`, `sound.js`, `background.js` distinguem erro de sucesso (toast âmbar, sem chime, notificação nativa diferente)
+- **Fix (Android):** FAB (botão flutuante) no Android agora fica no canto superior direito em vez de inferior direito
+  - No Android o botão de envio do chat fica no canto inferior direito, sobrepondo o FAB
+  - Detectado via `navigator.userAgent` (regex `/Android/i`), adiciona classe `zai-mobile` ao `<html>`
+  - CSS move o FAB para `top: 12px; right: 12px` e o esconde (`top: -50px`) quando o painel está aberto
+- **UI:** Removido o label "LANGUAGE" / "Language" antes do seletor de idioma (estava quebrando em larguras apertadas, exibindo "langua [select] ge")
+
 ## v0.10.2 — 2026-07-04 (remoção do toggle de previews)
 - **Removed:** Toggle "Ocultar previews de arquivos" da guia Configurações
   - A abordagem via CSS não funcionava bem — o espaço do preview continuava ocupado e aparecia um "buraco branco" no dark mode

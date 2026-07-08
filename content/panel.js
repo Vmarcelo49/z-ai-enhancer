@@ -73,6 +73,13 @@
     if (!document.body) return setTimeout(init, 30);
     if (document.getElementById("zai-fab")) return;
 
+    // Detect Android Firefox so we can move the FAB out of the way of the
+    // chat's send button (which sits at the bottom-right on mobile).
+    // On desktop the FAB stays bottom-right (its default position).
+    if (/Android/i.test(navigator.userAgent)) {
+      document.documentElement.classList.add("zai-mobile");
+    }
+
     buildFAB();
     buildSidebar();
     wireBus();
