@@ -240,7 +240,6 @@
   // ---------- Language section (in Config. tab) ----------
   function buildLanguageSection() {
     const section = el("div", { class: "zai-section" });
-    section.appendChild(el("div", { class: "zai-section-title", text: t("lang.label") }));
 
     const locales = window.__zaiI18n?.getAvailableLocales?.() || [];
     const select = el("select", {
@@ -255,11 +254,7 @@
       select.appendChild(opt);
     });
 
-    const row = el("div", { class: "zai-row" }, [
-      el("div", { class: "zai-row-label", text: t("lang.label") }),
-      select
-    ]);
-    section.appendChild(row);
+    section.appendChild(select);
     return section;
   }
 

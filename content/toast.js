@@ -102,6 +102,16 @@
       });
       return;
     }
+    if (evt.error) {
+      show({
+        title: t("toast.error_title"),
+        message: t("toast.error_msg"),
+        icon: "!",
+        accent: "#f59e0b",
+        durationMs: 5000
+      });
+      return;
+    }
     const dur = fmtDuration(evt.durationMs);
     const parts = [];
     if (evt.textLen) parts.push(`${evt.textLen.toLocaleString()} chars`);

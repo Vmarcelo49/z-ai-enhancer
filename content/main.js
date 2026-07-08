@@ -50,6 +50,7 @@
       browser.runtime.sendMessage({
         type: "agent-done",
         userStopped: !!evt.userStopped,
+        error: evt.error || null,
         durationMs: evt.durationMs || 0,
         textLen: evt.textLen || 0
       }).catch(() => {}); // background may be asleep — ignore

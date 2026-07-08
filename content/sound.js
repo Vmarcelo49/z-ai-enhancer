@@ -99,8 +99,9 @@
   }
 
   bus.on("agent:done", (evt) => {
-    // Skip the chime if the user manually stopped the agent
+    // Skip the chime if the user manually stopped the agent or if the stream errored
     if (evt.userStopped) return;
+    if (evt.error) return;
     playChime();
   });
   bus.on("agent:start", () => {

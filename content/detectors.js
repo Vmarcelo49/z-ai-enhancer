@@ -33,6 +33,7 @@
     generating: false,
     streamStartedAt: null,
     streamEndedAt: null,
+    streamError: null,           // error string from the last stream-end (null on success)
     stopBtnVisible: false,
     lastStreamUrl: null,
     lastStartTs: 0,
@@ -59,6 +60,7 @@
       state.generating = true;
       state.streamStartedAt = data.ts;
       state.streamEndedAt = null;
+      state.streamError = null;
       state.lastStreamUrl = data.url;
       state.lastStartTs = data.ts;
       state.firedDoneForUrl.delete(data.url);
@@ -67,6 +69,7 @@
       bus.emit("agent:start", { url: data.url, startedAt: data.ts });
     } else if (data.type === "stream-end") {
       state.streamEndedAt = data.ts;
+      state.streamError = data.error || null;
       state.lastEndTs = data.ts;
       bus.emit("agent:maybe-done", {
         url: data.url, endedAt: data.ts, reason: "stream-end", error: data.error || null
@@ -165,10 +168,13 @@
     if (url) state.firedDoneForUrl.add(url);
     state.generating = false;
     state.stopBtnVisible = false;
+    const error = state.streamError;
+    state.streamError = null;
     setAgentRunning(false);
     const userStoppedRecently = state.stopClickedTs && (Date.now() - state.stopClickedTs < 2000);
     bus.emit("agent:done", {
       url, messageId, textLen, reason,
+      error,
       userStopped: userStoppedRecently,
       startedAt: state.streamStartedAt,
       endedAt: Date.now(),

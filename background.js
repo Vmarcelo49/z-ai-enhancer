@@ -15,6 +15,8 @@ const BG_I18N = {
     done_title: "Z.ai — resposta concluída",
     stopped_title: "Z.ai — agente interrompido",
     stopped_msg: "Você parou a geração manualmente.",
+    error_title: "Z.ai — erro no stream",
+    error_msg: "A resposta falhou — verifique o console.",
     done_default: "O agente terminou de responder.",
     sound_toggle: "Som ao concluir: {state}",
     sound_on: "ON",
@@ -24,6 +26,8 @@ const BG_I18N = {
     done_title: "Z.ai — response complete",
     stopped_title: "Z.ai — agent interrupted",
     stopped_msg: "You stopped generation manually.",
+    error_title: "Z.ai — stream error",
+    error_msg: "The response failed — check the console.",
     done_default: "The agent finished responding.",
     sound_toggle: "Completion sound: {state}",
     sound_on: "ON",
@@ -33,6 +37,8 @@ const BG_I18N = {
     done_title: "Z.ai — 回复完成",
     stopped_title: "Z.ai — 代理已中断",
     stopped_msg: "您手动停止了生成。",
+    error_title: "Z.ai — 流式传输错误",
+    error_msg: "响应失败 — 请查看控制台。",
     done_default: "代理已完成回复。",
     sound_toggle: "完成声音：{state}",
     sound_on: "开",
@@ -42,6 +48,8 @@ const BG_I18N = {
     done_title: "Z.ai — respuesta completada",
     stopped_title: "Z.ai — agente interrumpido",
     stopped_msg: "Detuviste la generación manualmente.",
+    error_title: "Z.ai — error en el stream",
+    error_msg: "La respuesta falló — revisa la consola.",
     done_default: "El agente terminó de responder.",
     sound_toggle: "Sonido de completado: {state}",
     sound_on: "ON",
@@ -96,7 +104,7 @@ async function isChatTabFocused() {
   }
 }
 
-async function notifyDone({ userStopped, durationMs, textLen }) {
+async function notifyDone({ userStopped, error, durationMs, textLen }) {
   const prefs = await getPrefs();
   if (!prefs.nativeEnabled) return;
   if (prefs.nativeOnlyWhenUnfocused) {
@@ -105,16 +113,23 @@ async function notifyDone({ userStopped, durationMs, textLen }) {
   }
 
   const msgs = getI18nMessages();
-  const title = userStopped ? msgs.stopped_title : msgs.done_title;
-  const parts = [];
-  if (textLen) parts.push(`${textLen.toLocaleString()} chars`);
-  if (durationMs) {
-    const s = Math.round(durationMs / 1000);
-    parts.push(s < 60 ? `${s}s` : `${Math.floor(s / 60)}m ${s % 60}s`);
+  let title, message;
+  if (userStopped) {
+    title = msgs.stopped_title;
+    message = msgs.stopped_msg;
+  } else if (error) {
+    title = msgs.error_title;
+    message = msgs.error_msg;
+  } else {
+    title = msgs.done_title;
+    const parts = [];
+    if (textLen) parts.push(`${textLen.toLocaleString()} chars`);
+    if (durationMs) {
+      const s = Math.round(durationMs / 1000);
+      parts.push(s < 60 ? `${s}s` : `${Math.floor(s / 60)}m ${s % 60}s`);
+    }
+    message = parts.length ? parts.join(" · ") : msgs.done_default;
   }
-  const message = userStopped
-    ? msgs.stopped_msg
-    : (parts.length ? parts.join(" · ") : msgs.done_default);
 
   try {
     await browser.notifications.create({
@@ -133,6 +148,7 @@ browser.runtime.onMessage.addListener((msg, sender) => {
   if (!msg || msg.type !== "agent-done") return;
   notifyDone({
     userStopped: msg.userStopped,
+    error: msg.error,
     durationMs: msg.durationMs,
     textLen: msg.textLen
   });

@@ -43,12 +43,23 @@
       throw err;
     }
 
-    // Clone so the page still gets the body uninterrupted.
-    // v0.11.0: we no longer consume stream chunks (no listener for stream-chunk),
-    // so we don't need to read the body at all. Just detect stream-end via
-    // the response promise settling.
+    // Clone the Response so the page still gets the body uninterrupted, while
+    // we independently drain our clone to detect when the stream actually ends.
+    //
+    // IMPORTANT: the `response` promise resolves as soon as the HEADERS arrive,
+    // NOT when the body is fully received. So we cannot rely on promise
+    // settlement to detect stream-end — we must drain the body reader until
+    // `done` is true.
+    //
+    // v0.11.0 regression: a previous refactor dropped the
+    // `const cloneForObservation = response.clone()` line but kept the
+    // reference, causing a synchronous ReferenceError inside the IIFE. The
+    // catch block then posted `stream-end` with that error IMMEDIATELY (at
+    // stream-start time), which made detectors.js start its 2.5s confirmation
+    // window far too early — any response longer than 2.5s was never detected.
     (async () => {
       try {
+        const cloneForObservation = response.clone();
         const reader = cloneForObservation.body?.getReader();
         if (!reader) {
           post("stream-end", { url, ts: Date.now() });
