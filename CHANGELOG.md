@@ -1,5 +1,40 @@
 # Changelog
 
+## v0.13.0 — 2026-07-10 (auto-dismiss capacity dialog + auto-retry)
+- **Feat:** Auto-dismiss do dialog "Currently in peak hours" / "Model is at capacity" que o chat.z.ai mostra quando o GLM-5.2 está em overload.
+  - Novo content script `content/dialog-killer.js` monitora a página via `MutationObserver` (childList + subtree, sem attributes — overhead mínimo)
+  - Quando detecta um `[role=dialog][aria-modal=true]` cujo texto contém frases como "peak hours", "intensifying the coordination of resources", "switch to glm-5-turbo", clica automaticamente no botão `[data-dialog-close]` (o X no canto)
+  - Detecta também via scan inicial (caso o dialog já esteja aberto quando a extensão carrega)
+  - Stats disponíveis em `window.__zaiDialogKiller.stats` (total fechado, último timestamp)
+  - Emite eventos `dialog:dismissed`, `dialog:retry-sent`, `dialog:retry-giveup`, `dialog:retry-aborted` no `__zaiBus`
+
+- **Feat:** Auto-retry — após fechar o dialog de capacidade, espera e reenvia automaticamente a última mensagem do usuário.
+  - `content/page-hook.js` agora captura o body do POST `/api/v2/chat/completions` (antes de enviar, via `Request.clone()`), extrai a última mensagem com `role=user` e guarda em `window.__zaiLastUserMessage`
+  - Suporta formatos OpenAI-compatible: `content` pode ser string ou array de `{type:"text", text:"..."}`
+  - Quando o dialog é fechado, `dialog-killer.js` espera `retryDelayMs` (default 4000ms) e:
+    1. Verifica se o agente não está gerando (sem `[aria-label="Stop"]` visível) — se estiver, aborta (a request pode ter chegado a tempo)
+    2. Seta o valor do `textarea[placeholder="Send a Message"]` via native setter + dispatch `input` event (necessário pro Svelte reagir)
+    3. Clica no `#send-message-button`
+  - Limita a `retryMaxAttempts` (default 3) tentativas por mensagem
+  - Dedupe: não reenvia a mesma mensagem capturada duas vezes no mesmo turno
+  - Reseta o contador quando uma NOVA mensagem é capturada (turno novo)
+
+- **Settings:** Novas opções em `about:addons` → Configurações:
+  - "Auto-fechar dialog de capacidade" (default: ON)
+  - "Modo de match" → Substring (recomendado) ou Exato (estrito)
+  - "Reenviar mensagem após capacity" (default: ON)
+  - "Esperar antes de reenviar (ms)" (default: 4000)
+  - "Máximo de tentativas" (default: 3, max 20)
+  - "Janela de observação (ms)" (default: 8000)
+
+- **Phrases matcheadas (case-insensitive substring):**
+  - `peak hours`
+  - `currently in peak`
+  - `model is currently at capacity`
+  - `intensifying the coordination of resources`
+  - `switch to glm-5-turbo`
+  - `switch to glm-4.7` (fallback caso troquem o modelo sugerido)
+
 ## v0.12.3 — 2026-07-08 (fix Android + fix detecção)
 - **Fix (crítico):** Detecção de fim de mensagem quebrada desde v0.11.0
   - `page-hook.js` linha 52 referenciava `cloneForObservation` que nunca era definido — `ReferenceError` síncrono fazia `stream-end` disparar com erro imediatamente após `stream-start`
@@ -12,58 +47,3 @@
   - Detectado via `navigator.userAgent` (regex `/Android/i`), adiciona classe `zai-mobile` ao `<html>`
   - CSS move o FAB para `top: 12px; right: 12px` e o esconde (`top: -50px`) quando o painel está aberto
 - **UI:** Removido o label "LANGUAGE" / "Language" antes do seletor de idioma (estava quebrando em larguras apertadas, exibindo "langua [select] ge")
-
-## v0.10.2 — 2026-07-04 (remoção do toggle de previews)
-- **Removed:** Toggle "Ocultar previews de arquivos" da guia Configurações
-  - A abordagem via CSS não funcionava bem — o espaço do preview continuava ocupado e aparecia um "buraco branco" no dark mode
-  - Não conseguimos reproduzir o cenário de teste de forma confiável pra validar a abordagem alternativa (clicar no botão X nativo do z.ai)
-  - Removido: arquivo `content/artifacts.js`
-  - Removida: seção "Arquivos gerados" da guia Configurações
-  - Removida: entrada `artifacts.js` do `manifest.json`
-  - Storage key `artifactsHidden` (se já foi setada por algum usuário) é ignorada — não causa erro, só fica órfã
-
-## v0.10.0 — 2026-07-04 (toggle de previews + aba Anotações)
-- **Feat:** Nova aba "Anotações" (4ª guia na sidebar)
-  - Textarea livre pra anotações rápidas
-  - Persiste em `storage.local` com debounce de 500ms
-  - Sincroniza entre abas
-  - Status em tempo real: contagem de palavras, caracteres e linhas
-  - Botão "Limpar" com confirmação
-- **UI:** Sidebar agora tem 4 guias: Auto-Send, Prompts, Anotações, Config.
-
-## v0.9.0 — 2026-07-04 (limpeza da UI + fonte maior + delay movido)
-- **Removed:** Aviso fixo "ℹ A fila envia automaticamente..." (redundante)
-- **Refactor:** "Delay entre mensagens" movido de Auto-Send pra Configurações
-- **Visual:** Aumento geral de fonte pra combinar com z.ai (sidebar 15px, labels 14px, sections 12px)
-
-## v0.8.0 — 2026-07-04 (sidebar com guias)
-- **Feat:** Sidebar agora tem 3 guias (Auto-Send, Prompts, Configurações)
-- **Feat:** Botão "Limpar fila" inline com status pill + confirmação
-
-## v0.7.0 — 2026-07-04 (visual redesign to match z.ai)
-- **Visual:** Refactor de todo CSS pra usar design tokens do z.ai (Geist font, paleta monocromática, 6/8/12px radii)
-- **Dark mode fix:** Suporte à classe `.dark` no `<html>` do z.ai
-- **FAB redesign:** Menor (40×40), ícone SVG, sem roxo
-
-## v0.6.0 — 2026-07-04 (sidebar layout + always-on queue)
-- **Feat:** Sidebar fixa do lado direito (360px, full height)
-- **Feat:** Auto-send queue ALWAYS-ON
-
-## v0.5.0 — 2026-07-04 (AMO-ready release)
-- **Manifest:** AMO-compliant (data_collection_permissions, gecko_android, strict_min_version 140/142)
-- **Feat:** Keyboard shortcuts (Ctrl+Shift+Z, Alt+Shift+S, Alt+Shift+X)
-- **Feat:** Onboarding page on first install
-- **Docs:** README, PRIVACY, CONTRIBUTING, issue templates
-- **Lint:** 0 errors, 0 warnings, 0 notices
-
-## v0.4.0 — 2026-07-04 (biblioteca de prompts)
-- **Feat:** Prompts com variáveis {{mustache}}, import .txt/.md, export .md
-
-## v0.3.0 — 2026-07-04 (auto-send + in-page panel)
-- **Feat:** Auto-Send Queue + Painel flutuante + Estatísticas
-
-## v0.2.0 — 2026-07-04 (build limpo)
-- **Fix:** toast.js sem innerHTML / popup.js sem executeScript
-
-## v0.1.0 — 2026-07-03 (release inicial)
-- Detecção de fim de resposta em 3 camadas + Som + Toast + Notificação nativa

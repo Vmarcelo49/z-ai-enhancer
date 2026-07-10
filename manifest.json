@@ -1,14 +1,16 @@
 {
   "manifest_version": 3,
   "name": "Z.ai Enhancer",
-  "version": "0.12.3",
+  "version": "0.13.0",
   "description": "Floating panel for chat.z.ai: sound + visual notifications when the agent finishes responding, auto-send queue, and a reusable prompt library with {{variables}}.",
   "browser_specific_settings": {
     "gecko": {
       "id": "zai-enhancer@vmarcelo.dev",
       "strict_min_version": "140.0",
       "data_collection_permissions": {
-        "required": ["none"],
+        "required": [
+          "none"
+        ],
         "optional": []
       }
     },
@@ -21,11 +23,18 @@
     "url": "https://github.com/Vmarcelo49/z-ai-enhancer"
   },
   "homepage_url": "https://github.com/Vmarcelo49/z-ai-enhancer",
-  "permissions": ["notifications", "storage"],
-  "host_permissions": ["https://chat.z.ai/*"],
+  "permissions": [
+    "notifications",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://chat.z.ai/*"
+  ],
   "content_scripts": [
     {
-      "matches": ["https://chat.z.ai/*"],
+      "matches": [
+        "https://chat.z.ai/*"
+      ],
       "js": [
         "content/event-bus.js",
         "content/i18n.js",
@@ -38,25 +47,40 @@
         "content/autosend.js",
         "content/notes.js",
         "content/panel.js",
-        "content/main.js"
+        "content/main.js",
+        "content/dialog-killer.js"
       ],
-      "css": ["content/toast.css", "content/panel.css"],
+      "css": [
+        "content/toast.css",
+        "content/panel.css"
+      ],
       "run_at": "document_idle",
       "all_frames": false
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["content/page-hook.js", "content/i18n.js"],
-      "matches": ["https://chat.z.ai/*"]
+      "resources": [
+        "content/page-hook.js",
+        "content/i18n.js"
+      ],
+      "matches": [
+        "https://chat.z.ai/*"
+      ]
     },
     {
-      "resources": ["content/i18n.js"],
-      "matches": ["<all_urls>"]
+      "resources": [
+        "content/i18n.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ],
   "background": {
-    "scripts": ["background.js"]
+    "scripts": [
+      "background.js"
+    ]
   },
   "options_ui": {
     "page": "options.html",

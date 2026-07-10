@@ -53,6 +53,39 @@
     <input type="number" id="toastAutoDismissMs" min="0" step="500" style="width:100px" />
   </label>
 
+  <h2>Capacidade do servidor</h2>
+  <p class="hint">Quando o GLM-5.2 está em overload, o chat.z.ai mostra um dialog chato pedindo pra trocar de modelo. Habilite pra fechar automaticamente.</p>
+  <label class="row">
+    <span>Auto-fechar dialog de capacidade</span>
+    <input type="checkbox" id="dialogKillerEnabled" />
+  </label>
+  <label class="row">
+    <span>Modo de match</span>
+    <select id="dialogKillerMatchMode" style="width:130px; accent-color: var(--accent);">
+      <option value="substring">Substring (recomendado)</option>
+      <option value="exact">Exato (estrito)</option>
+    </select>
+  </label>
+
+  <h2>Reenvio automático</h2>
+  <p class="hint">Após fechar o dialog de capacidade, espera e reenvia a última mensagem automaticamente até conseguir.</p>
+  <label class="row">
+    <span>Reenviar mensagem após capacity</span>
+    <input type="checkbox" id="dialogKillerRetry" />
+  </label>
+  <label class="row">
+    <span>Esperar antes de reenviar (ms)</span>
+    <input type="number" id="dialogKillerRetryDelayMs" min="500" step="500" style="width:100px" />
+  </label>
+  <label class="row">
+    <span>Máximo de tentativas</span>
+    <input type="number" id="dialogKillerRetryMaxAttempts" min="1" max="20" step="1" style="width:100px" />
+  </label>
+  <label class="row">
+    <span>Janela de observação (ms)</span>
+    <input type="number" id="dialogKillerRetryWatchWindowMs" min="1000" step="1000" style="width:100px" />
+  </label>
+
   <div class="actions">
     <button id="testSound" type="button">🔊 Testar som</button>
     <button id="testToast" type="button">🔔 Testar toast</button>
