@@ -1,21 +1,31 @@
 /* content/refresh-retry.js
- * "Hard retry" on capacity dialog: refresh page → switch to Agent mode → resend.
+ * "Hard retry" on capacity dialog: refresh page → (optionally) switch to Agent
+ * mode → resend. Loops until the agent responds successfully.
  *
- * This is a more aggressive alternative to the soft retry in dialog-killer.js.
- * Instead of just dismissing the dialog and re-sending in place, it:
- *   1. Captures the current textarea text (fallback to last captured user msg)
- *   2. Persists it to browser.storage.local so it survives the reload
- *   3. Refreshes the page (location.reload)
- *   4. On page load, restores the message, clicks the "Agent" mode button,
- *      and clicks send
- *   5. Loops until the agent responds successfully (agent:done without error)
- *      or max attempts is reached
+ * Uses shared capacity-detection utilities from capacity-common.js.
+ *
+ * Agent-mode fix (v0.14.1):
+ *   - If URL is the root (https://chat.z.ai/)  → click "Agent" mode button
+ *     before sending (we're starting a new chat).
+ *   - If URL is an active chat (/c/{uuid})     → DO NOT click "Agent" — that
+ *     would create a new chat. Just reload the URL and resend; the chat
+ *     already exists and its mode is preserved across reloads.
+ *
+ * Flow:
+ *   1. capacity dialog appears → capacity-common observer fires
+ *   2. captures the current textarea text (fallback to last captured user msg)
+ *   3. persists it to browser.storage.local so it survives the reload
+ *   4. location.reload()
+ *   5. on page load: waits for textarea, optionally clicks Agent (root URL only),
+ *      sets textarea value, clicks send
+ *   6. listens for agent:done — if no error, success; if dialog re-appears,
+ *      loops back to step 1 (up to maxAttempts)
  *
  * Settings (storage.local):
  *   - refreshRetryEnabled            (default: true)
  *   - refreshRetryMaxAttempts        (default: 10)
  *   - refreshRetryPageReadyMs        (default: 3000)  wait after textarea appears
- *   - refreshRetryAgentModeWaitMs    (default: 1000)  wait after clicking Agent mode
+ *   - refreshRetryAgentModeWaitMs    (default: 1000)  wait after clicking Agent mode (root URL only)
  *   - refreshRetryCooldownMs         (default: 3000)  min gap between refreshes
  *   - refreshRetrySuccessWatchMs     (default: 120000) watch window for agent:done
  *   - refreshRetryStaleMs            (default: 3600000) pending retry older than this is dropped
@@ -34,19 +44,13 @@
  */
 (function () {
   const bus = window.__zaiBus;
+  const cap = window.__zaiCapacity;
+  if (!cap) {
+    console.warn("[zai-enhancer] capacity-common missing — refresh-retry.js cannot detect dialogs");
+    return;
+  }
 
   const STORAGE_KEY = "refreshRetry_pending";
-
-  // Same phrases as dialog-killer.js (kept duplicated to stay self-contained —
-  // refresh-retry must work even if dialog-killer is disabled).
-  const CAPACITY_PHRASES = [
-    "peak hours",
-    "currently in peak",
-    "model is currently at capacity",
-    "intensifying the coordination of resources",
-    "switch to glm-5-turbo",
-    "switch to glm-4.7",
-  ];
 
   // ---------- settings (cached) ----------
   let enabled = true;
@@ -97,6 +101,16 @@
       if (changes.refreshRetryStaleMs) staleMs = Number(changes.refreshRetryStaleMs.newValue) || 3600000;
     });
   } catch (_) {}
+
+  // ---------- URL helpers ----------
+  // "Root" URL means https://chat.z.ai/ (no /c/{uuid} path) — i.e. we're
+  // about to start a new chat. On root URL we DO click the Agent mode button
+  // after reload. On an active chat URL we DO NOT — clicking Agent would
+  // create a brand-new chat, losing the conversation context.
+  function isRootUrl() {
+    const path = location.pathname || "/";
+    return path === "/" || path === "";
+  }
 
   // ---------- DOM helpers ----------
   function getTextarea() {
@@ -239,29 +253,6 @@
     } catch (_) {}
   }
 
-  // ---------- capacity dialog detection ----------
-  function isCapacityDialog(dialog) {
-    if (!dialog) return false;
-    const text = (dialog.innerText || "").toLowerCase().trim();
-    if (!text) return false;
-    return CAPACITY_PHRASES.some((p) => text.includes(p));
-  }
-
-  function scanForCapacityDialog(root) {
-    if (!enabled) return false;
-    const candidates = root.querySelectorAll
-      ? root.querySelectorAll('[role="dialog"][aria-modal="true"]')
-      : [];
-    for (const dialog of candidates) {
-      const rect = dialog.getBoundingClientRect();
-      if (rect.width === 0 || rect.height === 0) continue;
-      if (!isCapacityDialog(dialog)) continue;
-      kickoffRefreshRetry(dialog);
-      return true;
-    }
-    return false;
-  }
-
   // ---------- the core: kick off a refresh-retry cycle ----------
   async function kickoffRefreshRetry(dialog) {
     if (refreshArmed) return; // already about to refresh
@@ -327,12 +318,15 @@
     await savePendingRetry(data);
     pendingRetry = data;
 
+    const urlLabel = isRootUrl() ? "root URL — will click Agent after reload" : "active chat — will just resend";
     console.debug(
-      `[zai-enhancer] refresh-retry: refreshing page (attempt ${attempts}/${maxAttempts})`
+      `[zai-enhancer] refresh-retry: refreshing page (attempt ${attempts}/${maxAttempts}) [${urlLabel}]`
     );
     showToast({
       title: `Model at capacity — retrying (${attempts}/${maxAttempts})`,
-      message: "Refreshing page and resending in Agent mode…",
+      message: isRootUrl()
+        ? "Refreshing page, switching to Agent mode, resending…"
+        : "Refreshing chat and resending…",
       icon: "↻",
       accent: "#f59e0b",
       durationMs: 3000,
@@ -377,11 +371,15 @@
     console.debug("[zai-enhancer] refresh-retry: resuming pending retry", {
       attempts: pendingRetry.attempts,
       textPreview: pendingRetry.text.slice(0, 80),
+      url: location.href,
+      isRoot: isRootUrl(),
     });
 
     showToast({
       title: `Resuming retry (${pendingRetry.attempts}/${maxAttempts})`,
-      message: "Switching to Agent mode and resending…",
+      message: isRootUrl()
+        ? "Switching to Agent mode and resending…"
+        : "Resending in active chat…",
       icon: "↻",
       accent: "#7c3aed",
       durationMs: 3000,
@@ -391,11 +389,18 @@
     // Wait for the page to be ready (textarea exists)
     await waitForPageReady();
 
-    // Click "Agent" mode button (if found and not already active)
-    await switchToAgentMode();
-
-    // Wait for agent mode to settle
-    await sleep(agentModeWaitMs);
+    // AGENT MODE FIX:
+    // Only click "Agent" mode button if we're at the root URL (https://chat.z.ai/).
+    // If we're in an active chat (/c/{uuid}), clicking "Agent" would create a
+    // brand-new chat — we want to resend in the EXISTING chat instead.
+    if (isRootUrl()) {
+      await switchToAgentMode();
+      await sleep(agentModeWaitMs);
+    } else {
+      console.debug(
+        "[zai-enhancer] refresh-retry: active chat URL — skipping Agent mode click (would create new chat)"
+      );
+    }
 
     // Set textarea value
     const okFill = setTextareaValue(pendingRetry.text);
@@ -549,29 +554,17 @@
     return new Promise((r) => setTimeout(r, ms));
   }
 
-  // ---------- MutationObserver for capacity dialog ----------
-  const observer = new MutationObserver((mutations) => {
-    if (!enabled) return;
-    for (const mut of mutations) {
-      for (const node of mut.addedNodes) {
-        if (node.nodeType !== Node.ELEMENT_NODE) continue;
-        if (node.matches?.('[role="dialog"]')) {
-          if (isCapacityDialog(node)) {
-            kickoffRefreshRetry(node);
-            return;
-          }
-        }
-        if (node.querySelector?.('[role="dialog"][aria-modal="true"]')) {
-          if (scanForCapacityDialog(node)) return;
-        }
-      }
-    }
+  // ---------- MutationObserver via shared capacity-common ----------
+  cap.setupObserver((dialog) => {
+    kickoffRefreshRetry(dialog);
   });
 
-  observer.observe(document.documentElement, { childList: true, subtree: true });
-
   // Initial scan (in case the dialog is already open when the script loads)
-  setTimeout(() => scanForCapacityDialog(document), 0);
+  setTimeout(() => {
+    if (!enabled) return;
+    const dialog = cap.findCapacityDialog(document);
+    if (dialog) kickoffRefreshRetry(dialog);
+  }, 0);
 
   // ---------- boot: check for pending retry on page load ----------
   if (document.readyState === "complete" || document.readyState === "interactive") {
@@ -595,9 +588,11 @@
       kickoffRefreshRetry({ innerText: "model is currently at capacity" });
     },
     scanNow: function () {
-      return scanForCapacityDialog(document);
+      const dialog = cap.findCapacityDialog(document);
+      if (dialog) kickoffRefreshRetry(dialog);
+      return !!dialog;
     },
   };
 
-  console.debug("[zai-enhancer] refresh-retry ready (refresh + agent mode + resend)");
+  console.debug("[zai-enhancer] refresh-retry ready (refresh + agent-mode-aware resend)");
 })();

@@ -1,18 +1,16 @@
 /* content/dialog-killer.js
  * Auto-dismiss the "Currently in peak hours" / "Model is at capacity" dialog
  * that chat.z.ai shows when GLM-5.2 is overloaded — AND optionally retry
- * sending the last user message after the dialog is dismissed.
+ * sending the last user message after the dialog is dismissed (soft retry,
+ * no page reload).
  *
- * The dialog has this structure (verified via DOM inspection):
- *   div.fixed.inset-0.z-10000 (overlay, pointer-events-none)
- *   └─ [data-dialog-overlay]                    ← backdrop
- *   └─ div[role=dialog][aria-modal=true]        ← the dialog
- *       └─ button[data-dialog-close]            ← X button (top-right corner)
- *       └─ button "Cancel"
- *       └─ button "Switch to GLM-5-Turbo"
+ * Capacity-detection logic lives in capacity-common.js (shared with
+ * refresh-retry.js). This module owns:
+ *   - Dismissing the dialog (clicking the X / Cancel button)
+ *   - Soft retry: re-sending the last user message in-place
  *
  * Retry flow:
- *   1. dialog appears → MutationObserver fires
+ *   1. dialog appears → capacity-common observer fires
  *   2. dismissDialog() clicks [data-dialog-close]
  *   3. retryLastMessage() waits `retryDelayMs` (default 4000ms)
  *   4. checks if agent is currently generating (looks for [aria-label="Stop"])
@@ -32,27 +30,15 @@
  *   - dialogKillerRetryDelayMs  (default: 4000)         — wait before retry
  *   - dialogKillerRetryMaxAttempts (default: 3)         — give up after N
  *   - dialogKillerRetryWatchWindowMs (default: 8000)    — window to detect re-appearance
- *
- * Phrases matched (case-insensitive substring):
- *   - "peak hours"
- *   - "currently in peak"
- *   - "model is currently at capacity"
- *   - "intensifying the coordination of resources"
- *   - "switch to glm-5-turbo"
- *   - "switch to glm-4.7" (safety net — sometimes shows different model)
  */
 (function () {
   const bus = window.__zaiBus;
+  const cap = window.__zaiCapacity;
   if (!bus) { console.warn("[zai-enhancer] event-bus missing — dialog-killer.js cannot fire events"); }
-
-  const CAPACITY_PHRASES = [
-    "peak hours",
-    "currently in peak",
-    "model is currently at capacity",
-    "intensifying the coordination of resources",
-    "switch to glm-5-turbo",
-    "switch to glm-4.7",
-  ];
+  if (!cap) {
+    console.warn("[zai-enhancer] capacity-common missing — dialog-killer.js cannot detect dialogs");
+    return;
+  }
 
   // ---------- settings (cached) ----------
   let enabled = true;
@@ -117,16 +103,6 @@
   });
 
   // ---------- helpers ----------
-  function isCapacityDialog(dialog) {
-    if (!dialog) return false;
-    const text = (dialog.innerText || "").toLowerCase().trim();
-    if (!text) return false;
-    if (matchMode === "exact") {
-      return CAPACITY_PHRASES.includes(text);
-    }
-    return CAPACITY_PHRASES.some((p) => text.includes(p));
-  }
-
   function findCloseButton(dialog) {
     let btn = dialog.querySelector("[data-dialog-close]");
     if (btn) return btn;
@@ -262,60 +238,39 @@
     }, retryDelayMs);
   }
 
-  function scanForCapacityDialog(root) {
-    if (!enabled) return false;
-    const candidates = root.querySelectorAll
-      ? root.querySelectorAll('[role="dialog"][aria-modal="true"]')
-      : [];
-    for (const dialog of candidates) {
-      const rect = dialog.getBoundingClientRect();
-      if (rect.width === 0 || rect.height === 0) continue;
-      if (!isCapacityDialog(dialog)) continue;
-      const dismissed = dismissDialog(dialog, "mutation-detected");
-      if (dismissed) {
-        // Schedule a retry of the last user message
-        scheduleRetry();
-      }
-      return dismissed;
+  function onCapacityDialogFound(dialog) {
+    if (!enabled) return;
+    const dismissed = dismissDialog(dialog, "mutation-detected");
+    if (dismissed) {
+      // Schedule a retry of the last user message
+      scheduleRetry();
     }
-    return false;
   }
 
   // ---------- initial scan ----------
-  setTimeout(() => scanForCapacityDialog(document), 0);
-
-  // ---------- MutationObserver ----------
-  const observer = new MutationObserver((mutations) => {
+  setTimeout(() => {
     if (!enabled) return;
-    for (const mut of mutations) {
-      for (const node of mut.addedNodes) {
-        if (node.nodeType !== Node.ELEMENT_NODE) continue;
-        if (node.matches?.('[role="dialog"]')) {
-          if (isCapacityDialog(node)) {
-            const dismissed = dismissDialog(node, "mutation-added");
-            if (dismissed) scheduleRetry();
-            return;
-          }
-        }
-        if (node.querySelector?.('[role="dialog"][aria-modal="true"]')) {
-          if (scanForCapacityDialog(node)) return;
-        }
-      }
-    }
-  });
+    const dialog = cap.findCapacityDialog(document, matchMode);
+    if (dialog) onCapacityDialogFound(dialog);
+  }, 0);
 
-  observer.observe(document.documentElement, { childList: true, subtree: true });
+  // ---------- MutationObserver via shared capacity-common ----------
+  cap.setupObserver(onCapacityDialogFound);
 
   // ---------- public API ----------
   window.__zaiDialogKiller = {
     get stats() { return { ...stats, retryAttempts }; },
     get enabled() { return enabled; },
     get retryEnabled() { return retryEnabled; },
-    scan: () => scanForCapacityDialog(document),
+    scan: () => {
+      const dialog = cap.findCapacityDialog(document, matchMode);
+      if (dialog) onCapacityDialogFound(dialog);
+      return !!dialog;
+    },
     retryNow: () => retryLastMessage(),
-    phrases: () => [...CAPACITY_PHRASES],
+    phrases: () => [...cap.PHRASES],
     getLastMessage: () => window.__zaiLastUserMessage || null,
   };
 
-  console.debug("[zai-enhancer] dialog-killer ready (auto-dismiss + retry on capacity)");
+  console.debug("[zai-enhancer] dialog-killer ready (auto-dismiss + soft retry on capacity)");
 })();

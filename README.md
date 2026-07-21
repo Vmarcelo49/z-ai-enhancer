@@ -1,62 +1,10 @@
 # Z.ai Enhancer
 
-> A floating panel for [chat.z.ai](https://chat.z.ai) that notifies you when the agent finishes responding, queues messages for auto-send, and lets you build a reusable prompt library.
+> A floating panel for [chat.z.ai](https://chat.z.ai).
 
 [![Firefox](https://img.shields.io/badge/Firefox-%E2%89%A5140-blue)](https://www.mozilla.org/firefox/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.5.0-purple)](#)
-
-## Why
-
-Z.ai is a great AI chat, but two things are missing out of the box:
-
-1. **You never know when a long response is done** — you have to keep checking the tab.
-2. **Repeating the same prompt patterns is tedious** — copy-paste from your notes, every single time.
-
-Z.ai Enhancer fixes both. It adds a small floating panel directly on `chat.z.ai` with sound + visual alerts, an auto-send queue, and a personal prompt library with `{{variables}}`.
-
-## Features
-
-### 🔔 Notifications
-- **Sound chime** when the agent finishes (synthesized via WebAudio — no asset files)
-- **Toast** in the bottom-right corner with char count and duration
-- **Native Firefox notification** when you're in another tab (optional)
-- Detects manual Stop clicks — message changes to "interrupted" instead of "complete"
-
-### 📚 Prompt library
-- Save reusable prompts with `{{variable}}` placeholders
-- Click a prompt → fill in the variables → it goes straight to the chat
-- Import `.txt` and `.md` files (drag-and-drop or file picker)
-- Export your whole library as Markdown for backup
-- Built-in search by title, category, tags, or body
-- 4 starter prompts included (explain like I'm 5, code review, summarize in bullets, translate to English)
-- Tracks how many times each prompt was used
-
-### 📨 Auto-send queue
-- Schedule a sequence of messages — the next one is sent automatically when the agent finishes
-- Set the delay between sends (1s–60s, default 2s)
-- Safety limits: max 50 items, max 10k chars per message
-- Auto-pauses if you click Stop, if the stream errors, or if you navigate away
-- State persists across reloads (but never auto-resumes — safety)
-
-### 📊 Stats
-- Tracks the last 50 response durations
-- Shows the average and 5 most recent in the panel
-
-### 🎛 In-page panel (no toolbar clicking required)
-- A small purple FAB in the bottom-right corner of `chat.z.ai`
-- Click to open the full panel — never have to dig into the Firefox toolbar
-- Dark/light mode automatic
-- Respects `prefers-reduced-motion`
-
-### ⌨️ Keyboard shortcuts
-| Action | Shortcut |
-|---|---|
-| Open the panel on chat.z.ai | `Ctrl+Shift+Z` (macOS: `Cmd+Ctrl+Shift+Z`) |
-| Toggle completion sound | `Alt+Shift+S` |
-| Click the Stop button | `Alt+Shift+X` |
-
-Customize at `about:addons → ⚙ → Extension Shortcuts`.
+[![Version](https://img.shields.io/badge/version-0.14.1-purple)](#)
 
 ## Install
 
@@ -122,6 +70,9 @@ z-ai-enhancer/
 │   ├── autosend.js           Auto-send queue motor
 │   ├── panel.js + .css       Floating panel UI (FAB + sections + modals)
 │   ├── stats.js              Duration stats collector
+│   ├── capacity-common.js    Shared capacity-dialog detection (phrases + observer)
+│   ├── dialog-killer.js      Auto-dismiss capacity dialog + soft retry
+│   ├── refresh-retry.js      Hard retry: refresh + agent-mode-aware resend
 │   └── main.js               Boot — injects page-hook + wires bus
 ├── icons/                    48/96/128 PNG
 ├── popup.html/.css/.js       Toolbar popup (quick toggle shortcut)
@@ -152,14 +103,6 @@ npx web-ext run
 - Firefox ≥ 140 (Desktop) or ≥ 142 (Android)
 - No build step — vanilla JS, no bundler, no transpiler
 - All source code is plain and readable (no minification, no obfuscation)
-
-## Roadmap
-
-- [ ] Cronômetro visível durante geração
-- [ ] Auto-save conversation as Markdown
-- [ ] Custom sound upload
-- [ ] Multi-tab monitoring (dedupe notifications across tabs)
-- [ ] i18n (English + Portuguese + Chinese)
 
 See [open issues](https://github.com/Vmarcelo49/z-ai-enhancer/issues) for the full list. PRs welcome!
 
