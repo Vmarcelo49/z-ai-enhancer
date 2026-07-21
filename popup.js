@@ -1,12 +1,16 @@
-/* popup.js — v0.12.1
+/* popup.js
  * Toolbar popup with i18n + language selector.
  * Uses inline i18n (can't access content script's window.__zaiI18n).
+ *
+ * Version is pulled dynamically from the extension manifest
+ * (browser.runtime.getManifest().version) so the popup never shows a
+ * stale hardcoded version string.
  */
 
 const POPUP_I18N = {
   "pt-BR": {
     open_panel: "🚀 Abrir painel no site",
-    hint: "Use o botão flutuante no canto inferior direito de chat.z.ai — não precisa mais abrir este popup.",
+    hint: "Use o botão flutuante no canto direito de chat.z.ai (verticalmente centralizado) — não precisa mais abrir este popup.",
     no_tab: "Abra https://chat.z.ai/ primeiro.",
     opening: "Abrindo chat.z.ai…",
     panel_opened: "Painel aberto no site ✓",
@@ -22,7 +26,7 @@ const POPUP_I18N = {
   },
   "en-US": {
     open_panel: "🚀 Open panel on site",
-    hint: "Use the floating button in the bottom-right of chat.z.ai — no need to open this popup.",
+    hint: "Use the floating button on the right side of chat.z.ai (vertically centered) — no need to open this popup.",
     no_tab: "Open https://chat.z.ai/ first.",
     opening: "Opening chat.z.ai…",
     panel_opened: "Panel opened on site ✓",
@@ -38,7 +42,7 @@ const POPUP_I18N = {
   },
   "zh-CN": {
     open_panel: "🚀 在网站上打开面板",
-    hint: "使用 chat.z.ai 右下角的浮动按钮 — 无需打开此弹窗。",
+    hint: "使用 chat.z.ai 右侧的浮动按钮（垂直居中） — 无需打开此弹窗。",
     no_tab: "请先打开 https://chat.z.ai/。",
     opening: "正在打开 chat.z.ai…",
     panel_opened: "面板已在网站上打开 ✓",
@@ -54,7 +58,7 @@ const POPUP_I18N = {
   },
   "es": {
     open_panel: "🚀 Abrir panel en el sitio",
-    hint: "Usa el botón flotante en la esquina inferior derecha de chat.z.ai — no necesitas abrir este popup.",
+    hint: "Usa el botón flotante en el lado derecho de chat.z.ai (centrado verticalmente) — no necesitas abrir este popup.",
     no_tab: "Abre https://chat.z.ai/ primero.",
     opening: "Abriendo chat.z.ai…",
     panel_opened: "Panel abierto en el sitio ✓",
@@ -145,6 +149,13 @@ async function sendToChatTab(message) {
   await loadSavedLocale();
   const prefs = await loadPrefs();
   const msgs = POPUP_I18N[currentLocale] || POPUP_I18N["pt-BR"];
+
+  // Inject the version from the manifest (never hardcode it again)
+  try {
+    const ver = browser.runtime.getManifest().version;
+    const verEl = $("version");
+    if (verEl && ver) verEl.textContent = `v${ver}`;
+  } catch (_) {}
 
   $("soundEnabled").checked = prefs.soundEnabled;
   $("toastEnabled").checked = prefs.toastEnabled;

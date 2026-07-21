@@ -8,21 +8,25 @@
 </head>
 <body>
   <main class="container">
-    <!-- Language selector (top-right) -->
-    <div class="lang-selector">
-      <select id="langSelect">
-        <option value="pt-BR">Português (Brasil)</option>
-        <option value="en-US">English</option>
-        <option value="zh-CN">中文</option>
-        <option value="es">Español</option>
-      </select>
-    </div>
-
     <header class="hero">
       <div class="logo">Z</div>
       <h1 data-i18n="onboarding.title">Z.ai Enhancer is installed</h1>
       <p class="subtitle" data-i18n="onboarding.subtitle">A floating panel that makes chat.z.ai more powerful.</p>
     </header>
+
+    <!-- Language selector (in the body, right after the hero — easy to find) -->
+    <section class="language">
+      <h2 data-i18n="onboarding.language_title">Language</h2>
+      <p class="language-desc" data-i18n="onboarding.language_desc">Choose the extension's language. This applies to the panel, toasts, and this welcome page.</p>
+      <label class="language-row">
+        <select id="langSelect">
+          <option value="pt-BR">Português (Brasil)</option>
+          <option value="en-US">English</option>
+          <option value="zh-CN">中文</option>
+          <option value="es">Español</option>
+        </select>
+      </label>
+    </section>
 
     <section class="features">
       <h2 data-i18n="onboarding.features">What you get</h2>
@@ -62,7 +66,7 @@
       <h2 data-i18n="onboarding.how_title">How to use it</h2>
       <ol>
         <li data-i18n="onboarding.how_1">Open chat.z.ai and sign in.</li>
-        <li data-i18n="onboarding.how_2">You'll see a circular button (FAB) in the bottom-right corner.</li>
+        <li data-i18n="onboarding.how_2">You'll see a circular button (FAB) on the right side (vertically centered).</li>
         <li data-i18n="onboarding.how_3">The panel has 4 tabs: Notifications, Prompts, Auto-Send, and Settings.</li>
         <li data-i18n="onboarding.how_4">You can also use keyboard shortcuts (see below).</li>
       </ol>
@@ -95,7 +99,7 @@
     </section>
 
     <footer>
-      <p>Z.ai Enhancer · v0.12.1 · MIT License · <a href="PRIVACY.md" target="_blank">Privacy</a> · <a href="CHANGELOG.md" target="_blank">Changelog</a></p>
+      <p>Z.ai Enhancer · <span id="version">v—</span> · MIT License · <a href="PRIVACY.md" target="_blank">Privacy</a> · <a href="CHANGELOG.md" target="_blank">Changelog</a></p>
     </footer>
   </main>
 

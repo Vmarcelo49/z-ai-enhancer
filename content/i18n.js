@@ -133,7 +133,7 @@
       "notif.bg.sound_off": "OFF",
       // Popup
       "popup.open_panel": "🚀 Abrir painel no site",
-      "popup.hint": "Use o botão flutuante no canto inferior direito de chat.z.ai — não precisa mais abrir este popup.",
+      "popup.hint": "Use o botão flutuante no canto direito de chat.z.ai (verticalmente centralizado) — não precisa mais abrir este popup.",
       "popup.no_tab": "Abra https://chat.z.ai/ primeiro.",
       "popup.opening": "Abrindo chat.z.ai…",
       "popup.panel_opened": "Painel aberto no site ✓",
@@ -175,7 +175,7 @@
       "onboarding.feat_stats_desc": "Veja a duração média das respostas recentes do agente para identificar lentidão.",
       "onboarding.how_title": "Como usar",
       "onboarding.how_1": "Abra o chat.z.ai e faça login.",
-      "onboarding.how_2": "Você verá um botão circular no canto inferior direito — clique para abrir o painel.",
+      "onboarding.how_2": "Você verá um botão circular no canto direito (verticalmente centralizado) — clique para abrir o painel.",
       "onboarding.how_3": "O painel tem 4 abas: Notificações, Prompts, Auto-Send e Configurações.",
       "onboarding.how_4": "Você também pode usar atalhos de teclado (veja abaixo).",
       "onboarding.shortcuts_title": "Atalhos de teclado",
@@ -190,6 +190,8 @@
       "onboarding.cta_open": "Abrir chat.z.ai →",
       "onboarding.cta_source": "Ver código-fonte no GitHub",
       "onboarding.welcome": "Bem-vindo",
+      "onboarding.language_title": "Idioma",
+      "onboarding.language_desc": "Escolha o idioma da extensão. Esta configuração se aplica ao painel, aos toasts e a esta página de boas-vindas.",
     },
 
     "en-US": {
@@ -300,7 +302,7 @@
       "notif.bg.sound_on": "ON",
       "notif.bg.sound_off": "OFF",
       "popup.open_panel": "🚀 Open panel on site",
-      "popup.hint": "Use the floating button in the bottom-right of chat.z.ai — no need to open this popup.",
+      "popup.hint": "Use the floating button on the right side of chat.z.ai (vertically centered) — no need to open this popup.",
       "popup.no_tab": "Open https://chat.z.ai/ first.",
       "popup.opening": "Opening chat.z.ai…",
       "popup.panel_opened": "Panel opened on site ✓",
@@ -337,7 +339,7 @@
       "onboarding.feat_stats_desc": "See the average duration of recent agent responses so you can spot slowdowns.",
       "onboarding.how_title": "How to use it",
       "onboarding.how_1": "Open chat.z.ai and sign in.",
-      "onboarding.how_2": "You'll see a circular button (FAB) in the bottom-right corner — click it to open the panel.",
+      "onboarding.how_2": "You'll see a circular button (FAB) on the right side (vertically centered) — click it to open the panel.",
       "onboarding.how_3": "The panel has 4 tabs: Notifications, Prompts, Auto-Send, and Settings.",
       "onboarding.how_4": "You can also use keyboard shortcuts (see below).",
       "onboarding.shortcuts_title": "Keyboard shortcuts",
@@ -352,6 +354,8 @@
       "onboarding.cta_open": "Open chat.z.ai →",
       "onboarding.cta_source": "View source on GitHub",
       "onboarding.welcome": "Welcome",
+      "onboarding.language_title": "Language",
+      "onboarding.language_desc": "Choose the extension's language. This applies to the panel, toasts, and this welcome page.",
     },
 
     "zh-CN": {
@@ -462,7 +466,7 @@
       "notif.bg.sound_on": "开",
       "notif.bg.sound_off": "关",
       "popup.open_panel": "🚀 在网站上打开面板",
-      "popup.hint": "使用 chat.z.ai 右下角的浮动按钮 — 无需打开此弹窗。",
+      "popup.hint": "使用 chat.z.ai 右侧的浮动按钮（垂直居中） — 无需打开此弹窗。",
       "popup.no_tab": "请先打开 https://chat.z.ai/。",
       "popup.opening": "正在打开 chat.z.ai…",
       "popup.panel_opened": "面板已在网站上打开 ✓",
@@ -499,7 +503,7 @@
       "onboarding.feat_stats_desc": "查看最近代理回复的平均时长，发现变慢的情况。",
       "onboarding.how_title": "如何使用",
       "onboarding.how_1": "打开 chat.z.ai 并登录。",
-      "onboarding.how_2": "您会在右下角看到一个圆形按钮 — 点击打开面板。",
+      "onboarding.how_2": "您会在右侧看到一个圆形按钮（垂直居中） — 点击打开面板。",
       "onboarding.how_3": "面板有4个标签页：通知、提示词、自动发送和设置。",
       "onboarding.how_4": "您也可以使用键盘快捷键（见下文）。",
       "onboarding.shortcuts_title": "键盘快捷键",
@@ -514,6 +518,8 @@
       "onboarding.cta_open": "打开 chat.z.ai →",
       "onboarding.cta_source": "在 GitHub 查看源码",
       "onboarding.welcome": "欢迎",
+      "onboarding.language_title": "语言",
+      "onboarding.language_desc": "选择扩展的语言。此设置适用于面板、提示和此欢迎页面。",
     },
 
     "es": {
@@ -624,7 +630,7 @@
       "notif.bg.sound_on": "ON",
       "notif.bg.sound_off": "OFF",
       "popup.open_panel": "🚀 Abrir panel en el sitio",
-      "popup.hint": "Usa el botón flotante en la esquina inferior derecha de chat.z.ai — no necesitas abrir este popup.",
+      "popup.hint": "Usa el botón flotante en el lado derecho de chat.z.ai (centrado verticalmente) — no necesitas abrir este popup.",
       "popup.no_tab": "Abre https://chat.z.ai/ primero.",
       "popup.opening": "Abriendo chat.z.ai…",
       "popup.panel_opened": "Panel abierto en el sitio ✓",
@@ -661,7 +667,7 @@
       "onboarding.feat_stats_desc": "Ve la duración media de las respuestas recientes del agente para detectar lentitud.",
       "onboarding.how_title": "Cómo usarlo",
       "onboarding.how_1": "Abre chat.z.ai e inicia sesión.",
-      "onboarding.how_2": "Verás un botón circular en la esquina inferior derecha — haz clic para abrir el panel.",
+      "onboarding.how_2": "Verás un botón circular en el lado derecho (centrado verticalmente) — haz clic para abrir el panel.",
       "onboarding.how_3": "El panel tiene 4 pestañas: Notificaciones, Prompts, Auto-Envío y Configuración.",
       "onboarding.how_4": "También puedes usar atajos de teclado (ver abajo).",
       "onboarding.shortcuts_title": "Atajos de teclado",
@@ -676,6 +682,8 @@
       "onboarding.cta_open": "Abrir chat.z.ai →",
       "onboarding.cta_source": "Ver código en GitHub",
       "onboarding.welcome": "Bienvenido",
+      "onboarding.language_title": "Idioma",
+      "onboarding.language_desc": "Elige el idioma de la extensión. Esta configuración se aplica al panel, a los toasts y a esta página de bienvenida.",
     }
   };
 

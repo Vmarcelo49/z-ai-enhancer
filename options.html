@@ -86,6 +86,29 @@
     <input type="number" id="dialogKillerRetryWatchWindowMs" min="1000" step="1000" style="width:100px" />
   </label>
 
+  <h2>Reenvio com refresh (hard retry)</h2>
+  <p class="hint">Alternativa mais agressiva ao reenvio simples: quando o dialog de capacidade aparece, copia o texto do textarea, <strong>atualiza a página</strong>, clica em "Agent" para voltar ao modo agente, e reenvia a mensagem. Repete até conseguir.</p>
+  <label class="row">
+    <span>Ativar reenvio com refresh</span>
+    <input type="checkbox" id="refreshRetryEnabled" />
+  </label>
+  <label class="row">
+    <span>Máximo de tentativas</span>
+    <input type="number" id="refreshRetryMaxAttempts" min="1" max="100" step="1" style="width:100px" />
+  </label>
+  <label class="row">
+    <span>Esperar página carregar (ms)</span>
+    <input type="number" id="refreshRetryPageReadyMs" min="500" step="500" style="width:100px" />
+  </label>
+  <label class="row">
+    <span>Esperar após clicar em Agent (ms)</span>
+    <input type="number" id="refreshRetryAgentModeWaitMs" min="0" step="500" style="width:100px" />
+  </label>
+  <label class="row">
+    <span>Cooldown entre refreshes (ms)</span>
+    <input type="number" id="refreshRetryCooldownMs" min="1000" step="500" style="width:100px" />
+  </label>
+
   <div class="actions">
     <button id="testSound" type="button">🔊 Testar som</button>
     <button id="testToast" type="button">🔔 Testar toast</button>

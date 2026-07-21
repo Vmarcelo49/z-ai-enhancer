@@ -39,6 +39,13 @@
   browser.storage.local.get(["zai_locale"]).then((p) => {
     if (p.zai_locale) currentLocale = p.zai_locale;
 
+    // Inject the version from the manifest (never hardcode it again)
+    try {
+      const ver = browser.runtime.getManifest().version;
+      const verEl = document.getElementById("version");
+      if (verEl && ver) verEl.textContent = `v${ver}`;
+    } catch (_) {}
+
     // Load i18n.js as a script tag to get access to window.__zaiI18n
     const script = document.createElement("script");
     script.src = browser.runtime.getURL("content/i18n.js");

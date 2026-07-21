@@ -178,20 +178,44 @@ footer {
 }
 footer a { color: var(--muted); }
 
-/* Language selector */
-.lang-selector {
-  position: absolute;
-  top: 16px;
-  right: 16px;
+/* Language selector — in the body of the page, right after the hero.
+   Previously this was an absolute-positioned div in the top-right corner
+   which was hard to find. Now it's a real <section> with a heading and
+   description so users actually see it. */
+.language {
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--accent-soft);
+  margin-bottom: 32px;
 }
-
-.lang-selector select {
-  padding: 6px 10px;
+.language h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.language-desc {
+  color: var(--muted);
+  font-size: 13.5px;
+  margin: 0 0 14px;
+  line-height: 1.5;
+}
+.language-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.language-row select {
+  padding: 8px 14px;
   border-radius: 8px;
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--fg);
   font-family: inherit;
-  font-size: 13px;
+  font-size: 14px;
   cursor: pointer;
+  min-width: 200px;
+}
+.language-row select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
 }
