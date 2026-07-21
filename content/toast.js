@@ -143,5 +143,12 @@
     }
   });
 
+  // Public API — allows other content scripts (e.g. refresh-retry.js) to fire
+  // custom toasts without going through the bus.
+  window.__zaiToast = {
+    show,
+    isEnabled: () => enabled,
+  };
+
   console.debug("[zai-enhancer] toast module ready");
 })();

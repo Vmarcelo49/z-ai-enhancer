@@ -75,7 +75,8 @@
 
     // Detect Android Firefox so we can move the FAB out of the way of the
     // chat's send button (which sits at the bottom-right on mobile).
-    // On desktop the FAB stays bottom-right (its default position).
+    // On desktop the FAB is vertically centered on the right side; on Android
+    // it moves to top-right (via the zai-mobile class in panel.css).
     if (/Android/i.test(navigator.userAgent)) {
       document.documentElement.classList.add("zai-mobile");
     }

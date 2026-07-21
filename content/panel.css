@@ -8,7 +8,7 @@
  * - Transitions: 0.15s cubic-bezier(.4,0,.2,1) — same as z.ai
  *
  * Components:
- *   #zai-fab              Toggle button (bottom-right, always visible)
+ *   #zai-fab              Toggle button (right side, vertically centered — always visible; on Android it moves to top-right to avoid the send button)
  *   #zai-sidebar          The sidebar itself (right side, full height)
  *   #zai-queue-badge      Item count badge on FAB
  *   body.zai-sidebar-open Hook that shifts the chat layout
@@ -118,7 +118,8 @@
 #zai-fab {
   position: fixed;
   right: 20px;
-  bottom: 20px;
+  top: 50%;
+  transform: translateY(-50%);
   width: 40px;       /* smaller, like z.ai icon buttons */
   height: 40px;
   border-radius: var(--zai-radius-full);
@@ -144,7 +145,7 @@
 }
 
 #zai-fab:active {
-  transform: scale(0.96);
+  transform: translateY(-50%) scale(0.96);
 }
 
 #zai-fab.zai-open {
@@ -235,15 +236,18 @@
 }
 
 /* ---------- Mobile (Android Firefox) ----------
-   On Android, chat.z.ai's send button sits at the bottom-right corner, which
-   is exactly where the FAB lives by default. Moving the FAB to the top-right
-   avoids the overlap. The class is added to <html> by panel.js based on
-   navigator.userAgent. iOS Safari is intentionally not matched because z.ai
-   doesn't officially support iOS via this extension. */
+   On Android, chat.z.ai's send button sits at the bottom-right corner.
+   On desktop the FAB is vertically centered on the right side, which on a
+   small mobile viewport would overlap the send button. Moving the FAB to
+   the top-right on Android avoids the overlap. The class is added to <html>
+   by panel.js based on navigator.userAgent. iOS Safari is intentionally not
+   matched because z.ai doesn't officially support iOS via this extension. */
 html.zai-mobile #zai-fab {
   top: 12px;
   right: 12px;
   bottom: auto;
+  /* Reset the desktop vertical-centering transform — mobile uses top: 12px */
+  transform: none;
   /* Slightly smaller on mobile to stay out of the way of the header */
   width: 36px;
   height: 36px;
